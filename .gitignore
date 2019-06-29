@@ -1,0 +1,10 @@
+/nbproject/private/
+/dist/lib/
+/test-in-spigot.bat
+/lib/
+/target/
+/build/
+/dist/
+/nbproject/
+/private/
+*.zip

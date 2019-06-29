@@ -1,0 +1,40 @@
+name: DisplayItem
+version: ${project.version}
+description: DisplayItem
+author: [crashdemons]
+api-version: 1.13
+softdepend: [Essentials,EssentialsX]
+main: com.github.crashdemons.displayitem_spigot.DisplayItem
+
+commands:
+    displayitem:
+        usage: /displayitem
+        description: Reload DisplayItem
+        permission: displayitem.reload
+        permission-message: You don't have permission for this command
+        aliases: [direload]
+      
+permissions:
+    displayitem.*:
+        description: gives all permissions for DisplayItem
+        default: false
+        children:
+            displayitem.reload: true
+            displayitem:replace: true
+
+    displayitem.reload:
+        description: Give permission to use the reload command
+        default: op
+
+    displayitem.replace:
+        description: Replace the keyword with the item entry in chat
+        default: true
+
+    displayitem.colorname:
+        description: Controls whether the name of the item is colorized for this user's chat. Requires 'replace' permission
+        default: true
+        
+    displayitem.bypasscooldown:
+        description: Bypass the spam detection cooldown
+        default: op
+        

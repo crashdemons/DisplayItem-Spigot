@@ -1,0 +1,8 @@
+displayitem:
+    replacement: '[i]'
+    itemformat: '&f[&b%item%&f &ex%amount%&f]&r'
+    spamdetectionbuffer: 5
+    spamthreshold: 2000
+    messages:
+        cooldown: '&cPlease wait a few seconds before sharing your item again.'
+    
