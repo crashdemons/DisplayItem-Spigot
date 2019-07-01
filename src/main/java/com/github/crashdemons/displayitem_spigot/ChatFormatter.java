@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  *
  * @author crashdemons (crashenator at gmail.com)
  */
-public class Chat_bukkit{
+public class ChatFormatter{
 
     private static String capFirst(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
@@ -48,30 +48,43 @@ public class Chat_bukkit{
         }
         return name;
     }
+    
+    private String formatItem(String itemformat, String itemname, String amount){
+            itemformat = itemformat.replaceAll("%amount%", amount);
+            itemformat = itemformat.replaceAll("%item%", itemname);
+            return itemformat;
+    }
 
-    public BaseComponent[] replaceItem(Player p, String message, String chatformat, boolean color) {
-        org.bukkit.inventory.ItemStack is = p.getItemInHand();
+    public BaseComponent[] chatInsertItem(String message, String chatformat, Player player, boolean colorize) {
+        ItemStack item = player.getInventory().getItemInMainHand();
 
-        String item = ChatColor.translateAlternateColorCodes('&', DisplayItem.instance.getConfig().getString("displayitem.itemformat"));
+        String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
+        String itemname = "";
+        String amount = "";
         BaseComponent[] itemComponent;
-        if (is != null && !is.getType().equals(Material.AIR)) {
-            String itemname = getItemName(is);
-            if(!color) itemname = ChatColor.stripColor(itemname);
-            item = item.replace("%item%", itemname);
-            item = item.replace("%amount%", String.valueOf(is.getAmount()));
-
-            itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(p, item, is)};
+        
+        boolean canDisplayItem = true;
+        if(item==null) canDisplayItem=false;
+        else if(item.getType()==Material.AIR) canDisplayItem=false;
+        
+        if (canDisplayItem) {
+            itemname = getItemName(item);
+            if(!colorize) itemname = ChatColor.stripColor(itemname);
+            amount=Integer.toString(item.getAmount());
+            itemformat = formatItem(itemformat, itemname, amount);
+            itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(player, itemformat, item)};
 
         } else {
-            item = item.replace("%item%", "Air");
-            item = item.replace("%amount%", "1");
-            itemComponent = TextComponent.fromLegacyText(item);
+            itemname="Air";
+            amount="1";
+            itemformat = formatItem(itemformat, itemname, amount);
+            itemComponent = TextComponent.fromLegacyText(itemformat);
         }
 
-        String replacestr = DisplayItem.instance.getConfig().getString("displayitem.replacement");
+        String replacestr = DisplayItem.plugin.getConfig().getString("displayitem.replacement");
 
         int start = message.indexOf(replacestr);
-        String foreword = String.format(chatformat, getPlayerName(p), message.substring(0, start));
+        String foreword = String.format(chatformat, getPlayerName(player), message.substring(0, start));
         String postword = "";
         try {
             postword = message.substring(start + replacestr.length());

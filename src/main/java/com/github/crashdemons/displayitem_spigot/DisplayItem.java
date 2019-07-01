@@ -11,23 +11,22 @@ public class DisplayItem
         extends JavaPlugin
         implements Listener {
 
-    public static DisplayItem instance;
-    //public boolean hasEssentials = false;
+    public static DisplayItem plugin;
 
     public void reload(boolean message, CommandSender sender) {
         reloadConfig();
         if (message) {
             if (sender == null) {
-                getLogger().info("DisplayItem reloaded config.");
+                getLogger().info("reloaded");
             } else {
-                sender.sendMessage(ChatColor.GOLD + "DisplayItem reloaded config.");
+                sender.sendMessage(ChatColor.GOLD + "DisplayItem reloaded");
             }
         }
     }
 
     @Override
     public void onEnable() {
-        instance = this;
+        plugin = this;
         saveDefaultConfig();
         reload(false, null);
         Bukkit.getServer().getPluginManager().registerEvents(new ChatListener(), this);
@@ -35,13 +34,11 @@ public class DisplayItem
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("displayitem")) {
-            if (sender.hasPermission("displayitem.reload")) {
-                DisplayItem.instance.reload(true, sender);
-            }
-            return true;
-        }
-        return false;
+        if (!cmd.getName().equalsIgnoreCase("displayitem")) return true;//not the command we expected!
+        if(args.length!=0) return false;
+        if (sender.hasPermission("displayitem.reload")) DisplayItem.plugin.reload(true, sender);
+        else sender.sendMessage(ChatColor.RED+"You don't have permission to do that.");
+        return true;
     }
 
 }

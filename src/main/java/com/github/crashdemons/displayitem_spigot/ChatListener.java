@@ -19,12 +19,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class ChatListener implements Listener {
-    Chat_bukkit itemreplacer = new Chat_bukkit();
+    ChatFormatter itemreplacer = new ChatFormatter();
     ItemSpamPreventer spampreventer = null;
     
     public ChatListener(){
-        int records = DisplayItem.instance.getConfig().getInt("displayitem.spamdetectionbuffer");
-        int threshold = DisplayItem.instance.getConfig().getInt("displayitem.spamthreshold");
+        int records = DisplayItem.plugin.getConfig().getInt("displayitem.spamdetectionbuffer");
+        int threshold = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
         spampreventer = new ItemSpamPreventer(records,threshold);
     }
     
@@ -36,14 +36,14 @@ public class ChatListener implements Listener {
         String format = event.getFormat();
         String message = event.getMessage();
         
-        String replacestr=DisplayItem.instance.getConfig().getString("displayitem.replacement");
+        String replacestr=DisplayItem.plugin.getConfig().getString("displayitem.replacement");
         int start = message.indexOf(replacestr);
         if(start==-1) return;
         if(!player.hasPermission("displayitem.replace")) return;
         
         if(!player.hasPermission("displayitem.bypasscooldown")){
             if(spampreventer.recordEvent(event).isSpam()){
-                String errormessage = DisplayItem.instance.getConfig().getString("displayitem.messages.cooldown");
+                String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
                 return;
             }
@@ -54,7 +54,7 @@ public class ChatListener implements Listener {
         boolean color = player.hasPermission("displayitem.colorname");
         
         
-        BaseComponent[] components = itemreplacer.replaceItem(event.getPlayer(), event.getMessage(),format,color);
+        BaseComponent[] components = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color);
         
         for(Player p : event.getRecipients()){
             p.spigot().sendMessage(components);
