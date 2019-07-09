@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
  * @author sainttx
  */
 public class HoverComponentManager {
+    private final static int ITEM_JSON_LENGTH_LIMIT = 32000;
     private HoverComponentManager(){}
     //https://www.spigotmc.org/threads/tut-item-tooltips-with-the-chatcomponent-api.65964/
     
@@ -26,9 +27,12 @@ public class HoverComponentManager {
     * @param player      the player
     * @param message  the message to send
     * @param item        the item to display in the tooltip
+    * @throws ItemJsonLengthException 
     */
-    public static void sendItemTooltipMessage(Player player, String message, ItemStack item) {
+    public static void sendItemTooltipMessage(Player player, String message, ItemStack item) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
+        if(itemJson.length()>ITEM_JSON_LENGTH_LIMIT) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ITEM_JSON_LENGTH_LIMIT);
+        
 
         // Prepare a BaseComponent array with the itemJson as a text component
         BaseComponent[] hoverEventComponents = new BaseComponent[]{
@@ -46,8 +50,9 @@ public class HoverComponentManager {
         // Finally, send the message to the player
         player.spigot().sendMessage(component);
     }
-    public static TextComponent getTooltipComponent(Player player, String message, ItemStack item) {
+    public static TextComponent getTooltipComponent(Player player, String message, ItemStack item) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
+        if(itemJson.length()>ITEM_JSON_LENGTH_LIMIT) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ITEM_JSON_LENGTH_LIMIT);
 
         // Prepare a BaseComponent array with the itemJson as a text component
         BaseComponent[] hoverEventComponents = new BaseComponent[]{

@@ -6,6 +6,7 @@
 package com.github.crashdemons.displayitem_spigot;
 
 import com.sainttx.util.HoverComponentManager;
+import com.sainttx.util.ItemJsonLengthException;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -72,7 +73,13 @@ public class ChatFormatter{
             if(!colorize) itemname = ChatColor.stripColor(itemname);
             amount=Integer.toString(item.getAmount());
             itemformat = formatItem(itemformat, itemname, amount);
-            itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(player, itemformat, item)};
+            try{
+                itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(player, itemformat, item)};
+            }catch(ItemJsonLengthException ex){
+                itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemtoolongformat"));
+                itemformat = formatItem(itemformat, itemname, amount);
+                itemComponent = TextComponent.fromLegacyText(itemformat);
+            }
 
         } else {
             itemname="Air";

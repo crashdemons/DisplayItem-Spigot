@@ -1,7 +1,7 @@
 name: DisplayItem
 version: ${project.version}
 description: DisplayItem
-author: [crashdemons]
+author: crashdemons
 api-version: 1.13
 softdepend: [Essentials,EssentialsX]
 main: com.github.crashdemons.displayitem_spigot.DisplayItem
