@@ -10,6 +10,19 @@ package com.sainttx.util;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class ItemJsonLengthException extends Exception {
-    public ItemJsonLengthException(String message){ super(message); }
-    public ItemJsonLengthException(Throwable cause){ super(cause); }
+    private final int jsonLength;
+    private final int jsonLimit;
+
+    public int getJsonLength() {
+        return jsonLength;
+    }
+
+    public int getJsonLimit() {
+        return jsonLimit;
+    }
+    public ItemJsonLengthException(String message, int length, int limit){
+        super(message); 
+        jsonLength = length;
+        jsonLimit=limit;
+    }
 }

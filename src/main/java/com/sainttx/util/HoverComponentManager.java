@@ -26,13 +26,15 @@ public class HoverComponentManager {
     * @param player      the player
     * @param message  the message to send
     * @param item        the item to display in the tooltip
-    * @paramn jsonLengthLimit upper limit on the json conversion of the item
+    * @param jsonLengthLimit upper limit on the json conversion of the item
     * @throws ItemJsonLengthException if the limit is exceeded
     */
     public static void sendItemTooltipMessage(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
-        System.out.println("ITEM JSON LENGTH: "+itemJson.length());
-        if(itemJson.length()>jsonLengthLimit) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit);
+        
+        if(itemJson.length()>jsonLengthLimit){
+            throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
+        }
         
 
         // Prepare a BaseComponent array with the itemJson as a text component
@@ -53,8 +55,9 @@ public class HoverComponentManager {
     }
     public static TextComponent getTooltipComponent(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
-        System.out.println("ITEM JSON LENGTH: "+itemJson.length());
-        if(itemJson.length()>jsonLengthLimit) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit);
+        if(itemJson.length()>jsonLengthLimit){
+            throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
+        }
 
         // Prepare a BaseComponent array with the itemJson as a text component
         BaseComponent[] hoverEventComponents = new BaseComponent[]{
