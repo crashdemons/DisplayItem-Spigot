@@ -4,6 +4,7 @@ displayitem:
     itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too klong) &f]&r'
     spamdetectionbuffer: 5
     spamthreshold: 2000
+    jsonlimit: 10000
     messages:
         cooldown: '&cPlease wait a few seconds before sharing your item again.'
     

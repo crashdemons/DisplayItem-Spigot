@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
  * @author sainttx
  */
 public class HoverComponentManager {
-    private final static int ITEM_JSON_LENGTH_LIMIT = 32000;
     private HoverComponentManager(){}
     //https://www.spigotmc.org/threads/tut-item-tooltips-with-the-chatcomponent-api.65964/
     
@@ -27,11 +26,13 @@ public class HoverComponentManager {
     * @param player      the player
     * @param message  the message to send
     * @param item        the item to display in the tooltip
-    * @throws ItemJsonLengthException 
+    * @paramn jsonLengthLimit upper limit on the json conversion of the item
+    * @throws ItemJsonLengthException if the limit is exceeded
     */
-    public static void sendItemTooltipMessage(Player player, String message, ItemStack item) throws ItemJsonLengthException {
+    public static void sendItemTooltipMessage(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
-        if(itemJson.length()>ITEM_JSON_LENGTH_LIMIT) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ITEM_JSON_LENGTH_LIMIT);
+        System.out.println("ITEM JSON LENGTH: "+itemJson.length());
+        if(itemJson.length()>jsonLengthLimit) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit);
         
 
         // Prepare a BaseComponent array with the itemJson as a text component
@@ -50,9 +51,10 @@ public class HoverComponentManager {
         // Finally, send the message to the player
         player.spigot().sendMessage(component);
     }
-    public static TextComponent getTooltipComponent(Player player, String message, ItemStack item) throws ItemJsonLengthException {
+    public static TextComponent getTooltipComponent(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
-        if(itemJson.length()>ITEM_JSON_LENGTH_LIMIT) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ITEM_JSON_LENGTH_LIMIT);
+        System.out.println("ITEM JSON LENGTH: "+itemJson.length());
+        if(itemJson.length()>jsonLengthLimit) throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit);
 
         // Prepare a BaseComponent array with the itemJson as a text component
         BaseComponent[] hoverEventComponents = new BaseComponent[]{

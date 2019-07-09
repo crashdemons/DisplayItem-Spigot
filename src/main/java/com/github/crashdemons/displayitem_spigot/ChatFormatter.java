@@ -58,7 +58,8 @@ public class ChatFormatter{
 
     public BaseComponent[] chatInsertItem(String message, String chatformat, Player player, boolean colorize) {
         ItemStack item = player.getInventory().getItemInMainHand();
-
+        
+        int jsonLimit =  DisplayItem.plugin.getConfig().getInt("jsonlimit");
         String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
         String itemname = "";
         String amount = "";
@@ -74,7 +75,7 @@ public class ChatFormatter{
             amount=Integer.toString(item.getAmount());
             itemformat = formatItem(itemformat, itemname, amount);
             try{
-                itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(player, itemformat, item)};
+                itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(player, itemformat, item, jsonLimit)};
             }catch(ItemJsonLengthException ex){
                 itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemtoolongformat"));
                 itemformat = formatItem(itemformat, itemname, amount);
