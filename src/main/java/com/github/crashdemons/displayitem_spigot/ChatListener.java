@@ -31,7 +31,7 @@ public class ChatListener implements Listener {
     }
     
     
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST,ignoreCancelled=true)
     public void onChat(AsyncPlayerChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
         Player player = event.getPlayer();
