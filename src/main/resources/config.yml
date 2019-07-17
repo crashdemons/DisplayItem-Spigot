@@ -1,4 +1,5 @@
 displayitem:
+    discordsrv: true
     replacement: '[i]'
     itemformat: '&f[&b%item%&f &ex%amount%&f]&r'
     itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too long)&f]&r'

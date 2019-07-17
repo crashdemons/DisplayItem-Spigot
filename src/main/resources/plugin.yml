@@ -3,7 +3,7 @@ version: ${project.version}
 description: DisplayItem
 author: crashdemons
 api-version: 1.13
-softdepend: [Essentials,EssentialsX]
+softdepend: [DiscordSRV]
 main: com.github.crashdemons.displayitem_spigot.DisplayItem
 
 commands:

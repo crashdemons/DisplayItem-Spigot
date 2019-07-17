@@ -6,7 +6,9 @@
 package com.github.crashdemons.displayitem_spigot;
 
 import com.github.crashdemons.displayitem_spigot.antispam.ItemSpamPreventer;
+import com.github.crashdemons.displayitem_spigot.events.ReplacedChatEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -31,7 +33,7 @@ public class ChatListener implements Listener {
     
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent event){
-        
+        if(event instanceof ReplacedChatEvent) return;
         Player player = event.getPlayer();
         String format = event.getFormat();
         String message = event.getMessage();
@@ -55,6 +57,18 @@ public class ChatListener implements Listener {
         
         
         BaseComponent[] components = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color);
+        
+        ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
+        
+        String legacyMessage = "";
+        for(BaseComponent component : components){
+            legacyMessage+=component.toLegacyText();
+        }
+        //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
+        replacementEvent.setMessage(legacyMessage);
+        replacementEvent.setMessageComponents(components);
+        Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
+        if(replacementEvent.isCancelled()) return;
         
         for(Player p : event.getRecipients()){
             p.spigot().sendMessage(components);

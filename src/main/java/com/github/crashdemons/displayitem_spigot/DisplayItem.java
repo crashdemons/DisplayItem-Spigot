@@ -12,6 +12,12 @@ public class DisplayItem
         implements Listener {
 
     public static DisplayItem plugin;
+    //private final DiscordSrvCompatibility discordSrv;
+    
+    public DisplayItem(){
+        //discordSrv = new DiscordSrvCompatibility(this);
+    }
+    
 
     public void reload(boolean message, CommandSender sender) {
         reloadConfig();
@@ -30,6 +36,14 @@ public class DisplayItem
         saveDefaultConfig();
         reload(false, null);
         Bukkit.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        if(getConfig().getBoolean("displayitem.discordsrv")){
+            //discordSrv.enable();
+        }
+    }
+    
+    @Override
+    public void onDisable(){
+        //discordSrv.disable();
     }
 
     @Override
