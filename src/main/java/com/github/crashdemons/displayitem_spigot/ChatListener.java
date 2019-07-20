@@ -56,22 +56,24 @@ public class ChatListener implements Listener {
         boolean color = player.hasPermission("displayitem.colorname");
         
         
-        BaseComponent[] components = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color);
+        BaseComponent[] componentsChat = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color,true);
+        BaseComponent[] componentsMessage = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color,false);
+        
         
         ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
         
         String legacyMessage = "";
-        for(BaseComponent component : components){
+        for(BaseComponent component : componentsMessage){
             legacyMessage+=component.toLegacyText();
         }
         //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
         replacementEvent.setMessage(legacyMessage);
-        replacementEvent.setMessageComponents(components);
+        replacementEvent.setMessageComponents(componentsChat);
         Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
         if(replacementEvent.isCancelled()) return;
         
         for(Player p : event.getRecipients()){
-            p.spigot().sendMessage(components);
+            p.spigot().sendMessage(componentsChat);
         }
         
         

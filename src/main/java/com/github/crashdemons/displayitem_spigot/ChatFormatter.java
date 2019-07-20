@@ -56,7 +56,7 @@ public class ChatFormatter{
             return itemformat;
     }
 
-    public BaseComponent[] chatInsertItem(String message, String chatformat, Player player, boolean colorize) {
+    public BaseComponent[] chatInsertItem(String message, String chatformat, Player player, boolean colorize, boolean includeName) {
         ItemStack item = player.getInventory().getItemInMainHand();
         
         int jsonLimit =  DisplayItem.plugin.getConfig().getInt("displayitem.jsonlimit");
@@ -93,7 +93,13 @@ public class ChatFormatter{
         String replacestr = DisplayItem.plugin.getConfig().getString("displayitem.replacement");
 
         int start = message.indexOf(replacestr);
-        String foreword = String.format(chatformat, getPlayerName(player), message.substring(0, start));
+        String foreword;
+        if(includeName){
+            foreword = String.format(chatformat, getPlayerName(player), message.substring(0, start));
+        }else{
+            foreword = message.substring(0, start);
+        }
+        
         String postword = "";
         try {
             postword = message.substring(start + replacestr.length());
