@@ -5,6 +5,7 @@ displayitem:
     spamdetectionbuffer: 5
     spamthreshold: 2000
     jsonlimit: 10000
+    listenerpriority: LOWEST
     messages:
         cooldown: '&cPlease wait a few seconds before sharing your item again.'
     

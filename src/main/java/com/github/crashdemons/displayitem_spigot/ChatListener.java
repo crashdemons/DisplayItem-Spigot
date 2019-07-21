@@ -23,15 +23,55 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class ChatListener implements Listener {
     ChatFormatter itemreplacer = new ChatFormatter();
     ItemSpamPreventer spampreventer = null;
+    EventPriority listenerpriority;
     
     public ChatListener(){
+        reloadConfig();
+    }
+    
+    private final void reloadPriority(){
+        String priorityString = DisplayItem.plugin.getConfig().getString("displayitem.listenerpriority");
+        try{
+            listenerpriority = EventPriority.valueOf(priorityString.toUpperCase());
+            if(listenerpriority==EventPriority.MONITOR) throw new IllegalArgumentException("Monitor priority is not allowed for modification events");
+        }catch(Exception e){
+            DisplayItem.plugin.getLogger().warning("Invalid priority value: "+priorityString);
+            listenerpriority = EventPriority.NORMAL;
+        }
+        DisplayItem.plugin.getLogger().warning("Listener priority: "+listenerpriority.name());
+    }
+    
+    public final void reloadConfig(){
         int records = DisplayItem.plugin.getConfig().getInt("displayitem.spamdetectionbuffer");
         int threshold = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
         spampreventer = new ItemSpamPreventer(records,threshold);
+        reloadPriority();
+    }
+    
+    //bad approach but what can I say...
+    @EventHandler(priority=EventPriority.LOWEST,ignoreCancelled=true)
+    public void onChatLowest(AsyncPlayerChatEvent event){
+        if(listenerpriority==EventPriority.LOWEST) onChat(event);
+    }
+    @EventHandler(priority=EventPriority.LOW,ignoreCancelled=true)
+    public void onChatLow(AsyncPlayerChatEvent event){
+        if(listenerpriority==EventPriority.LOW) onChat(event);
+    }
+    @EventHandler(priority=EventPriority.NORMAL,ignoreCancelled=true)
+    public void onChatNormal(AsyncPlayerChatEvent event){
+        if(listenerpriority==EventPriority.NORMAL) onChat(event);
+    }
+    @EventHandler(priority=EventPriority.HIGH,ignoreCancelled=true)
+    public void onChatHigh(AsyncPlayerChatEvent event){
+        if(listenerpriority==EventPriority.HIGH) onChat(event);
+    }
+    @EventHandler(priority=EventPriority.HIGHEST,ignoreCancelled=true)
+    public void onChatHighest(AsyncPlayerChatEvent event){
+        if(listenerpriority==EventPriority.HIGHEST) onChat(event);
     }
     
     
-    @EventHandler(priority = EventPriority.LOWEST,ignoreCancelled=true)
+    //@EventHandler(priority = EventPriority.LOWEST,ignoreCancelled=true)
     public void onChat(AsyncPlayerChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
         Player player = event.getPlayer();
