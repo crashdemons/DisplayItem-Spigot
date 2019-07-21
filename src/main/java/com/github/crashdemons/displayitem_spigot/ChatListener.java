@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
@@ -21,15 +22,28 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class ChatListener implements Listener {
-    ChatFormatter itemreplacer = new ChatFormatter();
-    ItemSpamPreventer spampreventer = null;
+
     EventPriority listenerpriority;
     
     public ChatListener(){
-        reloadConfig();
     }
     
-    private final void reloadPriority(){
+    public void registerEvents(){
+        Bukkit.getServer().getPluginManager().registerEvent(AsyncPlayerChatEvent.class, this, listenerpriority, new ChatEventExecutor(this,listenerpriority), DisplayItem.plugin, true);
+        DisplayItem.plugin.getLogger().warning("Registered listener");
+    }
+    
+    public void unregisterEvents(){
+        HandlerList.unregisterAll(this);
+        DisplayItem.plugin.getLogger().warning("Unregistered listener");
+    }
+    
+    public void reloadEvents(){
+        unregisterEvents();
+        registerEvents();
+    }
+    
+    private void reloadPriority(){
         String priorityString = DisplayItem.plugin.getConfig().getString("displayitem.listenerpriority");
         try{
             listenerpriority = EventPriority.valueOf(priorityString.toUpperCase());
@@ -41,82 +55,15 @@ public class ChatListener implements Listener {
         DisplayItem.plugin.getLogger().warning("Listener priority: "+listenerpriority.name());
     }
     
-    public final void reloadConfig(){
-        int records = DisplayItem.plugin.getConfig().getInt("displayitem.spamdetectionbuffer");
-        int threshold = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
-        spampreventer = new ItemSpamPreventer(records,threshold);
+    public void reload(){
         reloadPriority();
-    }
-    
-    //bad approach but what can I say...
-    @EventHandler(priority=EventPriority.LOWEST,ignoreCancelled=true)
-    public void onChatLowest(AsyncPlayerChatEvent event){
-        if(listenerpriority==EventPriority.LOWEST) onChat(event);
-    }
-    @EventHandler(priority=EventPriority.LOW,ignoreCancelled=true)
-    public void onChatLow(AsyncPlayerChatEvent event){
-        if(listenerpriority==EventPriority.LOW) onChat(event);
-    }
-    @EventHandler(priority=EventPriority.NORMAL,ignoreCancelled=true)
-    public void onChatNormal(AsyncPlayerChatEvent event){
-        if(listenerpriority==EventPriority.NORMAL) onChat(event);
-    }
-    @EventHandler(priority=EventPriority.HIGH,ignoreCancelled=true)
-    public void onChatHigh(AsyncPlayerChatEvent event){
-        if(listenerpriority==EventPriority.HIGH) onChat(event);
-    }
-    @EventHandler(priority=EventPriority.HIGHEST,ignoreCancelled=true)
-    public void onChatHighest(AsyncPlayerChatEvent event){
-        if(listenerpriority==EventPriority.HIGHEST) onChat(event);
+        reloadEvents();
     }
     
     
-    //@EventHandler(priority = EventPriority.LOWEST,ignoreCancelled=true)
-    public void onChat(AsyncPlayerChatEvent event){
-        if(event instanceof ReplacedChatEvent) return;
-        Player player = event.getPlayer();
-        String format = event.getFormat();
-        String message = event.getMessage();
-        
-        String replacestr=DisplayItem.plugin.getConfig().getString("displayitem.replacement");
-        int start = message.indexOf(replacestr);
-        if(start==-1) return;
-        if(!player.hasPermission("displayitem.replace")) return;
-        
-        if(!player.hasPermission("displayitem.bypasscooldown")){
-            if(spampreventer.recordEvent(event).isSpam()){
-                String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
-                return;
-            }
-        }
-        
-        event.setCancelled(true);
-        
-        boolean color = player.hasPermission("displayitem.colorname");
-        
-        
-        BaseComponent[] componentsChat = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color,true);
-        BaseComponent[] componentsMessage = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color,false);
-        
-        
-        ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
-        
-        String legacyMessage = "";
-        for(BaseComponent component : componentsMessage){
-            legacyMessage+=component.toLegacyText();
-        }
-        //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
-        replacementEvent.setMessage(legacyMessage);
-        replacementEvent.setMessageComponents(componentsChat);
-        Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
-        if(replacementEvent.isCancelled()) return;
-        
-        for(Player p : event.getRecipients()){
-            p.spigot().sendMessage(componentsChat);
-        }
-        
-        
-        
-    }
+    
+    
+    
+    
+
 }
