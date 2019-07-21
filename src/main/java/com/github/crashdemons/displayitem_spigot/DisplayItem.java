@@ -7,11 +7,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class DisplayItem
-        extends JavaPlugin
-        implements Listener {
+public class DisplayItem extends JavaPlugin{
 
-    public static DisplayItem plugin;
+    public static DisplayItem plugin=null;
+    private ChatListener listener=null;
     //private final DiscordSrvCompatibility discordSrv;
     
     public DisplayItem(){
@@ -35,7 +34,8 @@ public class DisplayItem
         plugin = this;
         saveDefaultConfig();
         reload(false, null);
-        Bukkit.getServer().getPluginManager().registerEvents(new ChatListener(), this);
+        listener = new ChatListener();
+        Bukkit.getServer().getPluginManager().registerEvents(listener, this);
         if(getConfig().getBoolean("displayitem.discordsrv")){
             //discordSrv.enable();
         }
@@ -52,6 +52,8 @@ public class DisplayItem
         if(args.length!=0) return false;
         if (sender.hasPermission("displayitem.reload")) DisplayItem.plugin.reload(true, sender);
         else sender.sendMessage(ChatColor.RED+"You don't have permission to do that.");
+        if(listener!=null) listener.reloadConfig();
+        
         return true;
     }
 
