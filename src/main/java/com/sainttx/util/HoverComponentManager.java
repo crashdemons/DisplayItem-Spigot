@@ -53,7 +53,7 @@ public class HoverComponentManager {
         // Finally, send the message to the player
         player.spigot().sendMessage(component);
     }
-    public static TextComponent getTooltipComponent(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
+    public static TextComponent getTooltipComponent(String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         String itemJson = convertItemStackToJson(item);
         if(itemJson.length()>jsonLengthLimit){
             throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
