@@ -66,9 +66,7 @@ public class MessageFormatter{
                 return meta.getLocalizedName();
             }
         }
-        Material mat = is.getType();
-        String matname = mat.name().toLowerCase().replace('_', ' ');
-        return capFirst(matname);
+        return getMaterialTypename(is.getType());
     }
     
     private String formatItemLabel(String itemformat, String itemname, String amount, String itemtype){
