@@ -52,7 +52,7 @@ public class MessageFormatter{
     }
     
     private static String getMaterialTypename(Material mat){
-        return camelCase(mat.name().replaceAll("_", " "));
+        return camelCase(mat.name().toLowerCase().replaceAll("_", " "));
         
     }
     
