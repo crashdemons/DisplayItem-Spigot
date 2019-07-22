@@ -23,7 +23,7 @@ import org.bukkit.plugin.EventExecutor;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class ChatEventExecutor implements EventExecutor {
-    private final ChatFormatter itemreplacer = new ChatFormatter();
+    private final ChatLineFormatter itemreplacer = new ChatLineFormatter();
     private final ItemSpamPreventer spampreventer;
     private final ChatListener listener;
     private final EventPriority priority;
@@ -68,24 +68,23 @@ public class ChatEventExecutor implements EventExecutor {
         boolean color = player.hasPermission("displayitem.colorname");
         
         
-        BaseComponent[] componentsChat = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color,true);
-        BaseComponent[] componentsMessage = itemreplacer.chatInsertItem(event.getMessage(),format, event.getPlayer(),color,false);
+        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(event.getPlayer(), event.getMessage(),format, color);
         
         
         ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
         
         String legacyMessage = "";
-        for(BaseComponent component : componentsMessage){
+        for(BaseComponent component : chatLineSplit.content){
             legacyMessage+=component.toLegacyText();
         }
         //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
         replacementEvent.setMessage(legacyMessage);
-        replacementEvent.setMessageComponents(componentsChat);
+        replacementEvent.setMessageComponents(chatLineSplit.content);
         Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
         if(replacementEvent.isCancelled()) return;
         
         for(Player p : event.getRecipients()){
-            p.spigot().sendMessage(componentsChat);
+            p.spigot().sendMessage(chatLineSplit.toComponents());
         }
     }
     

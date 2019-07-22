@@ -8,7 +8,6 @@ package com.github.crashdemons.displayitem_spigot;
 import com.sainttx.util.HoverComponentManager;
 import com.sainttx.util.ItemJsonLengthException;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -20,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  *
  * @author crashdemons (crashenator at gmail.com)
  */
-public class ChatFormatter{
+public class MessageFormatter{
 
     private static String capFirst(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
@@ -40,26 +39,15 @@ public class ChatFormatter{
         String matname = mat.name().toLowerCase().replace('_', ' ');
         return capFirst(matname);
     }
-
-    private static String getPlayerName(Player p) {
-        String name = p.getName();
-        String custname = p.getDisplayName();
-        if (custname != null) {
-            name = custname;
-        }
-        return name;
-    }
     
-    private String formatItem(String itemformat, String itemname, String amount){
+    private String formatItemLabel(String itemformat, String itemname, String amount){
             itemformat = itemformat.replaceAll("%amount%", amount);
             itemformat = itemformat.replaceAll("%item%", itemname);
             return itemformat;
     }
-
-    public BaseComponent[] chatInsertItem(String message, String chatformat, Player player, boolean colorize, boolean includeName) {
-        ItemStack item = player.getInventory().getItemInMainHand();
-        
-        int jsonLimit =  DisplayItem.plugin.getConfig().getInt("displayitem.jsonlimit");
+    
+    
+    private BaseComponent[] formatItemComponents(ItemStack item, boolean colorize){
         String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
         String itemname = "";
         String amount = "";
@@ -73,42 +61,35 @@ public class ChatFormatter{
             itemname = getItemName(item);
             if(!colorize) itemname = ChatColor.stripColor(itemname);
             amount=Integer.toString(item.getAmount());
-            itemformat = formatItem(itemformat, itemname, amount);
+            itemformat = formatItemLabel(itemformat, itemname, amount);
+            int jsonLimit =  DisplayItem.plugin.getConfig().getInt("displayitem.jsonlimit");
             try{
-                itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(player, itemformat, item, jsonLimit)};
+                itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(itemformat, item, jsonLimit)};
             }catch(ItemJsonLengthException ex){
                 DisplayItem.plugin.getLogger().warning(ex.getMessage());
                 itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemtoolongformat"));
-                itemformat = formatItem(itemformat, itemname, amount);
+                itemformat = formatItemLabel(itemformat, itemname, amount);
                 itemComponent = TextComponent.fromLegacyText(itemformat);
             }
 
         } else {
             itemname="Air";
             amount="1";
-            itemformat = formatItem(itemformat, itemname, amount);
+            itemformat = formatItemLabel(itemformat, itemname, amount);
             itemComponent = TextComponent.fromLegacyText(itemformat);
         }
-
+        return itemComponent;
+    }
+    
+    public SplitChatMessage messageInsertItem(Player player, String messageText, boolean colorize){
         String replacestr = DisplayItem.plugin.getConfig().getString("displayitem.replacement");
-
-        int start = message.indexOf(replacestr);
-        String foreword;
-        if(includeName){
-            foreword = String.format(chatformat, getPlayerName(player), message.substring(0, start));
-        }else{
-            foreword = message.substring(0, start);
-        }
+        SplitChatMessage bukkitTextSplit = SplitChatMessage.from(messageText, replacestr);
         
-        String postword = "";
-        try {
-            postword = message.substring(start + replacestr.length());
-        } catch (Exception e) {
-            //leave string blank
-        }
-        BaseComponent[] foreText = TextComponent.fromLegacyText(foreword);
-        BaseComponent[] postText = TextComponent.fromLegacyText(postword);
-
-        return new ComponentBuilder("").append(foreText).append(itemComponent).append(postText).create();
+        ItemStack item = player.getInventory().getItemInMainHand();
+        BaseComponent[] itemComponent=formatItemComponents(item,colorize);
+        
+        bukkitTextSplit.content = itemComponent;
+        
+        return bukkitTextSplit;
     }
 }

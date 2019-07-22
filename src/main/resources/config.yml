@@ -2,6 +2,10 @@ displayitem:
     replacement: '[i]'
     itemformat: '&f[&b%item%&f &ex%amount%&f]&r'
     itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too long)&f]&r'
+    
+    overridechatformat: false
+    format: '&r%displayname%&f: %message%'
+    
     spamdetectionbuffer: 5
     spamthreshold: 2000
     jsonlimit: 10000
