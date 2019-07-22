@@ -8,6 +8,7 @@ package com.github.crashdemons.displayitem_spigot;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -48,7 +49,7 @@ public class ChatLineFormatter extends MessageFormatter{
     public SplitChatMessage chatLineInsertItem(Player player, String bukkitChatFormat, String bukkitMessageText, boolean colorize) {
         BaseComponent[] messageInserted = messageInsertItem(player, bukkitMessageText, colorize).toComponents();
         
-        String chatLineFormat = getChatLineFormat(bukkitChatFormat);
+        String chatLineFormat = ChatColor.translateAlternateColorCodes('&',getChatLineFormat(bukkitChatFormat));
         
         String displayname = getPlayerName(player);
         //use a temporary placeholder so that we can tell if the chat format added text before and/or after the message, not just after!
