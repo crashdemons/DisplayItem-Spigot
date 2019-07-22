@@ -25,6 +25,37 @@ public class MessageFormatter{
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    private static String camelCase(String str)
+    {
+        StringBuilder builder = new StringBuilder(str);
+        // Flag to keep track if last visited character is a 
+        // white space or not
+        boolean isLastSpace = true;
+
+        // Iterate String from beginning to end.
+        for(int i = 0; i < builder.length(); i++)
+        {
+                char ch = builder.charAt(i);
+
+                if(isLastSpace && ch >= 'a' && ch <='z')
+                {
+                        // Character need to be converted to uppercase
+                        builder.setCharAt(i, (char)(ch + ('A' - 'a') ));
+                        isLastSpace = false;
+                }else if (ch != ' ')
+                        isLastSpace = false;
+                else
+                        isLastSpace = true;
+        }
+
+        return builder.toString();
+    }
+    
+    private static String getMaterialTypename(Material mat){
+        return camelCase(mat.name().replaceAll("_", " "));
+        
+    }
+    
     private static String getItemName(ItemStack is) {
         ItemMeta meta = is.getItemMeta();
         if (meta != null) {
@@ -40,9 +71,10 @@ public class MessageFormatter{
         return capFirst(matname);
     }
     
-    private String formatItemLabel(String itemformat, String itemname, String amount){
+    private String formatItemLabel(String itemformat, String itemname, String amount, String itemtype){
             itemformat = itemformat.replaceAll("%amount%", amount);
             itemformat = itemformat.replaceAll("%item%", itemname);
+            itemformat = itemformat.replaceAll("%itemtype%",itemtype);
             return itemformat;
     }
     
@@ -50,6 +82,7 @@ public class MessageFormatter{
     private BaseComponent[] formatItemComponents(ItemStack item, boolean colorize){
         String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
         String itemname = "";
+        String itemtype = "";
         String amount = "";
         BaseComponent[] itemComponent;
         
@@ -61,21 +94,22 @@ public class MessageFormatter{
             itemname = getItemName(item);
             if(!colorize) itemname = ChatColor.stripColor(itemname);
             amount=Integer.toString(item.getAmount());
-            itemformat = formatItemLabel(itemformat, itemname, amount);
+            itemtype = getMaterialTypename(item.getType());
+            itemformat = formatItemLabel(itemformat, itemname, amount, itemtype);
             int jsonLimit =  DisplayItem.plugin.getConfig().getInt("displayitem.jsonlimit");
             try{
                 itemComponent = new BaseComponent[]{HoverComponentManager.getTooltipComponent(itemformat, item, jsonLimit)};
             }catch(ItemJsonLengthException ex){
                 DisplayItem.plugin.getLogger().warning(ex.getMessage());
                 itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemtoolongformat"));
-                itemformat = formatItemLabel(itemformat, itemname, amount);
+                itemformat = formatItemLabel(itemformat, itemname, amount, itemtype);
                 itemComponent = TextComponent.fromLegacyText(itemformat);
             }
 
         } else {
             itemname="Air";
             amount="1";
-            itemformat = formatItemLabel(itemformat, itemname, amount);
+            itemformat = formatItemLabel(itemformat, itemname, amount, itemtype);
             itemComponent = TextComponent.fromLegacyText(itemformat);
         }
         return itemComponent;
