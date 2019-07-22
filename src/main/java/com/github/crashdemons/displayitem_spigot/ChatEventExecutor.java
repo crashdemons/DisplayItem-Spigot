@@ -68,7 +68,7 @@ public class ChatEventExecutor implements EventExecutor {
         boolean color = player.hasPermission("displayitem.colorname");
         
         
-        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(event.getPlayer(), event.getMessage(),format, color);
+        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(event.getPlayer(), format, message, color);
         
         
         ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
