@@ -1,8 +1,7 @@
 package com.github.crashdemons.displayitem_spigot.antispam;
 
+import com.github.crashdemons.displayitem_spigot.concurrency.DeferredChatEventParameters;
 import java.util.UUID;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * Helper class that records and detects PlayerInteractEvent right-click spam
@@ -10,7 +9,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
  *
  * @author crash
  */
-public class ItemSpamPreventer extends EventSpamPreventer {
+public class ItemSpamPreventer extends DeferredEventSpamPreventer {
 
     private final long interactThresholdMs;
 
@@ -19,13 +18,13 @@ public class ItemSpamPreventer extends EventSpamPreventer {
         interactThresholdMs = timeMS;
     }
 
-    private final class ItemRecord extends EventSpamRecord {
+    private final class ItemRecord extends DeferredEventSpamRecord {
 
         final UUID playerId;
 
-        public ItemRecord(AsyncPlayerChatEvent event) {
-            super(event);
-            playerId = event.getPlayer().getUniqueId();
+        public ItemRecord(DeferredChatEventParameters params) {
+            super(params);
+            playerId = params.playerId;
         }
 
         boolean closeTo(ItemRecord record) {
@@ -41,13 +40,7 @@ public class ItemSpamPreventer extends EventSpamPreventer {
         }
     }
 
-    @Override
-    public SpamResult recordEvent(org.bukkit.event.Event event) {
-        if (event instanceof PlayerInteractEvent) {
-            return recordEvent((PlayerInteractEvent) event);
-        }
-        return new SpamResult(false);
-    }
+
 
     /**
      * Records an interaction event internally and prepares a result after
@@ -60,10 +53,10 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * @return The Spam-detection Result object
      * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
      */
-    public synchronized SpamResult recordEvent(AsyncPlayerChatEvent event) {
+    public synchronized SpamResult recordEventParams(DeferredChatEventParameters params) {
         SpamResult result = new SpamResult(false);
-        ItemRecord record = new ItemRecord(event);
-        for (EventSpamRecord otherRecordObj : records) {
+        ItemRecord record = new ItemRecord(params);
+        for (DeferredEventSpamRecord otherRecordObj : records) {
             ItemRecord otherRecord = (ItemRecord) otherRecordObj;
             if (record.closeTo(otherRecord)) {
                 result.toggle();

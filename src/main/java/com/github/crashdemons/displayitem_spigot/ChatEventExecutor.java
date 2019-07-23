@@ -5,7 +5,10 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.concurrency.DeferredChatEventParameters;
 import com.github.crashdemons.displayitem_spigot.antispam.ItemSpamPreventer;
+import com.github.crashdemons.displayitem_spigot.concurrency.ConcurrentPermissions;
+import com.github.crashdemons.displayitem_spigot.concurrency.DeferredMessenger;
 import com.github.crashdemons.displayitem_spigot.events.ReplacedChatEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -23,69 +26,95 @@ import org.bukkit.plugin.EventExecutor;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class ChatEventExecutor implements EventExecutor {
+
     private final ChatLineFormatter itemreplacer = new ChatLineFormatter();
     private final ItemSpamPreventer spampreventer;
     private final ChatListener listener;
     private final EventPriority priority;
-    
-    
-    public ChatEventExecutor(ChatListener listener, EventPriority priority){
-        this.listener=listener;
-        this.priority=priority;
+
+    private final String replacementString;
+    private final String cooldownMessage;
+
+    public ChatEventExecutor(ChatListener listener, EventPriority priority) {
+        this.listener = listener;
+        this.priority = priority;
         int records = DisplayItem.plugin.getConfig().getInt("displayitem.spamdetectionbuffer");
         int threshold = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
-        spampreventer = new ItemSpamPreventer(records,threshold);
+        spampreventer = new ItemSpamPreventer(records, threshold);
+
+        this.replacementString = DisplayItem.plugin.getConfig().getString("displayitem.replacement");
+        this.cooldownMessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
     }
-    
+
     @Override
     public void execute(Listener listener, Event originalEvent) throws EventException {
-        if(!(originalEvent instanceof AsyncPlayerChatEvent)) return;
+        if (!(originalEvent instanceof AsyncPlayerChatEvent)) {
+            return;
+        }
         AsyncPlayerChatEvent event = (AsyncPlayerChatEvent) originalEvent;
         onChat(event);
     }
-    
-    public void onChat(AsyncPlayerChatEvent event){
-        if(event instanceof ReplacedChatEvent) return;
+
+    public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        String format = event.getFormat();
-        String message = event.getMessage();
+        DeferredChatEventParameters deferredParams = new DeferredChatEventParameters(event);//collect thread-safe values from event for processing
+        if (event instanceof ReplacedChatEvent) {
+            return;
+        }
+        int start = event.getMessage().indexOf(replacementString);
+        if (start == -1) {
+            return;
+        }
         
-        String replacestr=DisplayItem.plugin.getConfig().getString("displayitem.replacement");
-        int start = message.indexOf(replacestr);
-        if(start==-1) return;
-        if(!player.hasPermission("displayitem.replace")) return;
-        
-        if(!player.hasPermission("displayitem.bypasscooldown")){
-            if(spampreventer.recordEvent(event).isSpam()){
-                String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
+        if(!ConcurrentPermissions.getPermissionAsync(player, "displayitem.replace")){
+            return;
+        }
+        if(!ConcurrentPermissions.getPermissionAsync(player, "displayitem.bypasscooldown")){
+            if (spampreventer.recordEventParams(deferredParams).isSpam()) {
+                String errormessage = cooldownMessage;
+                DeferredMessenger.sendAsync(player, ChatColor.translateAlternateColorCodes('&', errormessage));
                 return;
             }
         }
         
         event.setCancelled(true);
-        
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(DisplayItem.plugin, new Runnable() {
+            public void run() {
+                onChatDeferred(deferredParams);
+
+            }
+        }, 1L);
+    }
+    
+    
+
+    public void onChatDeferred(DeferredChatEventParameters params) {
+        String message = params.message;
+        String format = params.format;
+        Player player = params.getPlayer();
+        //if(player==null) return;
+
         boolean color = player.hasPermission("displayitem.colorname");
-        
-        
-        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(event.getPlayer(), format, message, color);
-        
-        
-        ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
-        
+
+        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(player, format, message, color);
+
+        ReplacedChatEvent replacementEvent = new ReplacedChatEvent(params);
+
         String legacyMessage = "";
-        for(BaseComponent component : chatLineSplit.content){
-            legacyMessage+=component.toLegacyText();
+        for (BaseComponent component : chatLineSplit.content) {
+            legacyMessage += component.toLegacyText();
         }
         //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
         replacementEvent.setMessage(legacyMessage);
         replacementEvent.setMessageComponents(chatLineSplit.content);
         Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
-        if(replacementEvent.isCancelled()) return;
-        
-        for(Player p : event.getRecipients()){
+        if (replacementEvent.isCancelled()) {
+            return;
+        }
+
+        for (Player p : replacementEvent.getRecipients()) {
             p.spigot().sendMessage(chatLineSplit.toComponents());
         }
     }
-    
+
 }

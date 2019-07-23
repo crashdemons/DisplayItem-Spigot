@@ -6,7 +6,6 @@
 package com.github.crashdemons.displayitem_spigot;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -58,6 +57,22 @@ public class ChatLineFormatter extends MessageFormatter{
         SplitChatMessage chatLineSplit = SplitChatMessage.from(chatLineX, MESSAGE_REPLACEMENT_PLACEHOLDER);
         
         chatLineSplit.content = messageInserted;
+        
+        return chatLineSplit;
+    }
+    
+    public SplitChatMessage chatLineNoInsert(Player player, String bukkitChatFormat, String bukkitMessageText){
+        //BaseComponent[] messageInserted = messageInsertItem(player, bukkitMessageText, colorize).toComponents();
+        
+        String chatLineFormat = ChatColor.translateAlternateColorCodes('&',getChatLineFormat(bukkitChatFormat));
+        
+        String displayname = getPlayerName(player);
+        //use a temporary placeholder so that we can tell if the chat format added text before and/or after the message, not just after!
+        String chatLineX = formatChatLine(chatLineFormat, displayname, MESSAGE_REPLACEMENT_PLACEHOLDER);
+        //split the message into before, message, after parts.
+        SplitChatMessage chatLineSplit = SplitChatMessage.from(chatLineX, MESSAGE_REPLACEMENT_PLACEHOLDER);
+        
+        chatLineSplit.content = TextComponent.fromLegacyText(bukkitMessageText);
         
         return chatLineSplit;
     }

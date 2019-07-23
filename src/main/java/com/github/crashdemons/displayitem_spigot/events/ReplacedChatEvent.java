@@ -5,6 +5,7 @@
  */
 package com.github.crashdemons.displayitem_spigot.events;
 
+import com.github.crashdemons.displayitem_spigot.concurrency.DeferredChatEventParameters;
 import java.util.Set;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
@@ -34,5 +35,9 @@ public class ReplacedChatEvent extends AsyncPlayerChatEvent{
     public ReplacedChatEvent(AsyncPlayerChatEvent parentEvent){
         super(parentEvent.isAsynchronous(),parentEvent.getPlayer(), parentEvent.getMessage(), parentEvent.getRecipients());
         this.setFormat(parentEvent.getFormat());
+    }
+    
+    public ReplacedChatEvent(DeferredChatEventParameters params){
+        super(false, params.getPlayer(), params.message, params.getRecipients());
     }
 }
