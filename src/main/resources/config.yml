@@ -10,6 +10,7 @@ displayitem:
     spamthreshold: 2000
     jsonlimit: 10000
     listenerpriority: NORMAL
+    sendmodifiedchatevent: true
     messages:
         cooldown: '&cPlease wait a few seconds before sharing your item again.'
     

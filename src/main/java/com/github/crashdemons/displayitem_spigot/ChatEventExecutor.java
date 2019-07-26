@@ -27,6 +27,7 @@ public class ChatEventExecutor implements EventExecutor {
     private final ItemSpamPreventer spampreventer;
     private final ChatListener listener;
     private final EventPriority priority;
+    private final boolean sendModifiedChatEvent;
     
     
     public ChatEventExecutor(ChatListener listener, EventPriority priority){
@@ -35,6 +36,7 @@ public class ChatEventExecutor implements EventExecutor {
         int records = DisplayItem.plugin.getConfig().getInt("displayitem.spamdetectionbuffer");
         int threshold = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
         spampreventer = new ItemSpamPreventer(records,threshold);
+        sendModifiedChatEvent = DisplayItem.plugin.getConfig().getBoolean("displayitem.sendmodifiedchatevent");
     }
     
     @Override
@@ -80,8 +82,11 @@ public class ChatEventExecutor implements EventExecutor {
         //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
         replacementEvent.setMessage(legacyMessage);
         replacementEvent.setMessageComponents(chatLineSplit.content);
-        Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
-        if(replacementEvent.isCancelled()) return;
+        
+        if(sendModifiedChatEvent){
+            Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
+            if(replacementEvent.isCancelled()) return;
+        }
         
         for(Player p : event.getRecipients()){
             p.spigot().sendMessage(chatLineSplit.toComponents());
