@@ -1,7 +1,10 @@
 displayitem:
     replacement: '[i]'
-    itemformat: '&f[&b%item%&f &ex%amount%&f]&r'
+    itemformat: '&f[&b%item%&r &ex%amount%&f]&r'
     itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too long)&f]&r'
+    
+    usebooknameformat: true
+    booknameformat: '&o%booktitle%&r'
     
     overridechatformat: false
     format: '&r%displayname%&f: %message%'

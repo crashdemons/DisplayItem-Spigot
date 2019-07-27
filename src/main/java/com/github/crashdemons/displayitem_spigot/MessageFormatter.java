@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 /**
@@ -56,7 +57,21 @@ public class MessageFormatter{
         
     }
     
-    private static String getItemName(ItemStack is) {
+    private static String formatBookName(String bookformat, ItemStack is){
+        if(!is.getType().equals(Material.WRITTEN_BOOK)) return null;
+        ItemMeta meta = is.getItemMeta();
+        if(meta instanceof BookMeta){
+            BookMeta bookmeta = (BookMeta) meta;
+            if(bookmeta.hasTitle() && bookmeta.hasTitle()){
+                bookformat = bookformat.replaceAll("%booktitle%", bookmeta.getTitle());
+                bookformat = bookformat.replaceAll("%bookauthor%", bookmeta.getAuthor());
+            }
+        }
+        return null;
+    }
+    
+    
+    private static String getItemName(ItemStack is, String bookformat, boolean usebookname) {
         ItemMeta meta = is.getItemMeta();
         if (meta != null) {
             if (meta.hasDisplayName()) {
@@ -64,6 +79,10 @@ public class MessageFormatter{
             }
             if (meta.hasLocalizedName()) {
                 return meta.getLocalizedName();
+            }
+            if(usebookname && meta instanceof BookMeta){
+                String bookname = formatBookName(bookformat,is);
+                if(bookname!=null) return bookname;
             }
         }
         return getMaterialTypename(is.getType());
@@ -88,8 +107,13 @@ public class MessageFormatter{
         if(item==null) canDisplayItem=false;
         else if(item.getType()==Material.AIR) canDisplayItem=false;
         
+        
         if (canDisplayItem) {
-            itemname = getItemName(item);
+            
+            boolean usebookname = DisplayItem.plugin.getConfig().getBoolean("displayitem.usebooknameformat");
+            String bookformat = DisplayItem.plugin.getConfig().getString("displayitem.booknameformat");
+            
+            itemname = getItemName(item,bookformat,usebookname);
             if(!colorize) itemname = ChatColor.stripColor(itemname);
             amount=Integer.toString(item.getAmount());
             itemtype = getMaterialTypename(item.getType());
