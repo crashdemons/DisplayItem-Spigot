@@ -65,6 +65,7 @@ public class MessageFormatter{
             if(bookmeta.hasTitle() && bookmeta.hasTitle()){
                 bookformat = bookformat.replaceAll("%booktitle%", bookmeta.getTitle());
                 bookformat = bookformat.replaceAll("%bookauthor%", bookmeta.getAuthor());
+                return bookformat;
             }
         }
         return null;
