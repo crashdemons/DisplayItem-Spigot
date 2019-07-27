@@ -53,7 +53,7 @@ public class MessageFormatter{
     }
     
     private static String getMaterialTypename(Material mat){
-        return camelCase(mat.name().toLowerCase().replaceAll("_", " "));
+        return camelCase(mat.name().toLowerCase().replace("_", " "));
         
     }
     
@@ -63,8 +63,8 @@ public class MessageFormatter{
         if(meta instanceof BookMeta){
             BookMeta bookmeta = (BookMeta) meta;
             if(bookmeta.hasTitle() && bookmeta.hasTitle()){
-                bookformat = bookformat.replaceAll("%booktitle%", bookmeta.getTitle());
-                bookformat = bookformat.replaceAll("%bookauthor%", bookmeta.getAuthor());
+                bookformat = bookformat.replace("%booktitle%", bookmeta.getTitle());
+                bookformat = bookformat.replace("%bookauthor%", bookmeta.getAuthor());
                 return bookformat;
             }
         }
@@ -90,9 +90,9 @@ public class MessageFormatter{
     }
     
     private String formatItemLabel(String itemformat, String itemname, String amount, String itemtype){
-            itemformat = itemformat.replaceAll("%amount%", amount);
-            itemformat = itemformat.replaceAll("%item%", itemname);
-            itemformat = itemformat.replaceAll("%itemtype%",itemtype);
+            itemformat = itemformat.replace("%amount%", amount);
+            itemformat = itemformat.replace("%item%", itemname);
+            itemformat = itemformat.replace("%itemtype%",itemtype);
             return itemformat;
     }
     
@@ -139,8 +139,9 @@ public class MessageFormatter{
     }
     
     public SplitChatMessage messageInsertItem(Player player, String messageText, boolean colorize){
+        String metareplacestr = DisplayItem.plugin.getConfig().getString("displayitem.metareplacement");
         String replacestr = DisplayItem.plugin.getConfig().getString("displayitem.replacement");
-        SplitChatMessage bukkitTextSplit = SplitChatMessage.from(messageText, replacestr);
+        SplitChatMessage bukkitTextSplit = SplitChatMessage.fromWithExternalReplacement(messageText, replacestr,   metareplacestr,replacestr);
         
         ItemStack item = player.getInventory().getItemInMainHand();
         BaseComponent[] itemComponent=formatItemComponents(item,colorize);

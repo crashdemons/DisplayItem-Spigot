@@ -30,6 +30,7 @@ public class ChatEventExecutor implements EventExecutor {
     private final boolean sendModifiedChatEvent;
     
     
+    
     public ChatEventExecutor(ChatListener listener, EventPriority priority){
         this.listener=listener;
         this.priority=priority;
@@ -53,43 +54,53 @@ public class ChatEventExecutor implements EventExecutor {
         String message = event.getMessage();
         
         String replacestr=DisplayItem.plugin.getConfig().getString("displayitem.replacement");
-        int start = message.indexOf(replacestr);
-        if(start==-1) return;
-        if(!player.hasPermission("displayitem.replace")) return;
+        String metareplacestr=DisplayItem.plugin.getConfig().getString("displayitem.metareplacement");
         
+        
+        boolean itemNeedsReplacing = message.contains(replacestr);
+        if(!player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
         if(!player.hasPermission("displayitem.bypasscooldown")){
             if(spampreventer.recordEvent(event).isSpam()){
                 String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
-                return;
+                itemNeedsReplacing=false;
             }
         }
         
-        event.setCancelled(true);
-        
-        boolean color = player.hasPermission("displayitem.colorname");
-        
-        
-        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(event.getPlayer(), format, message, color);
-        
-        
-        ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
-        
-        String legacyMessage = "";
-        for(BaseComponent component : chatLineSplit.content){
-            legacyMessage+=component.toLegacyText();
+
+
+        if(itemNeedsReplacing){
+            event.setCancelled(true);
+
+            boolean color = player.hasPermission("displayitem.colorname");
+
+
+            SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(player, format, message, color);
+
+
+            ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);
+
+            String legacyMessage = "";
+            for(BaseComponent component : chatLineSplit.content){
+                legacyMessage+=component.toLegacyText();
+            }
+            //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
+            replacementEvent.setMessage(legacyMessage);
+            replacementEvent.setMessageComponents(chatLineSplit.content);
+
+            if(sendModifiedChatEvent){
+                Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
+                if(replacementEvent.isCancelled()) return;
+            }
+
+            for(Player p : event.getRecipients()){
+                p.spigot().sendMessage(chatLineSplit.toComponents());
+            }
         }
-        //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
-        replacementEvent.setMessage(legacyMessage);
-        replacementEvent.setMessageComponents(chatLineSplit.content);
-        
-        if(sendModifiedChatEvent){
-            Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
-            if(replacementEvent.isCancelled()) return;
-        }
-        
-        for(Player p : event.getRecipients()){
-            p.spigot().sendMessage(chatLineSplit.toComponents());
+        //make sure we replace [I]->[i] on the original event, regardless of it being cancelled.
+        if((!metareplacestr.isEmpty()) && message.contains(metareplacestr)){
+            message=message.replace(metareplacestr, replacestr);
+            event.setMessage(message);
         }
     }
     

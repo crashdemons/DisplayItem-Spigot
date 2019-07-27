@@ -1,5 +1,7 @@
 displayitem:
-    #set the text that is replaced with the held item
+    #set the text that is replaced with the item-replacement string, to allow posting it in chat - may not contain the replacement string
+    metareplacement: '[I]'
+    #set the text that is replaced with the held item - may not contain the meta replacement string
     replacement: '[i]'
     #how the item should appear in chat (using formatting codes and replacements)
     itemformat: '&f[&b%item%&r &ex%amount%&f]&r'

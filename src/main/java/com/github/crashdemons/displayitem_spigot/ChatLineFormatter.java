@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
  */
 public class ChatLineFormatter extends MessageFormatter{
 
-    private static final String MESSAGE_REPLACEMENT_PLACEHOLDER = "[[DI-REPL-MARKER]]";
+    private static final String MESSAGE_REPLACEMENT_PLACEHOLDER = "[[DI-MESG-MARKER]]";
 
     private static String getPlayerName(Player p) {
         String name = p.getName();
@@ -38,8 +38,8 @@ public class ChatLineFormatter extends MessageFormatter{
     }
     
     private String formatChatLine(String chatLineFormat, String displayname, String message){
-            chatLineFormat = chatLineFormat.replaceAll("%displayname%", displayname);
-            chatLineFormat = chatLineFormat.replaceAll("%message%", message);
+            chatLineFormat = chatLineFormat.replace("%displayname%", displayname);
+            chatLineFormat = chatLineFormat.replace("%message%", message);
             return chatLineFormat;
     }
     

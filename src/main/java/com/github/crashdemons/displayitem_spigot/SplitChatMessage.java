@@ -19,13 +19,23 @@ public class SplitChatMessage {
     public BaseComponent[] suffix;
     
     
-    public static SplitChatMessage from(String message,String elementString){
+    public static SplitChatMessage fromWithExternalReplacement(String message, String elementString, String externalReplacement, String externalReplaceWith){
         int start = message.indexOf(elementString);
         int end = start + elementString.length();
         String prefix = message.substring(0, start);
         String element = message.substring(start, end);
         String suffix = message.substring(end);
+        
+        if(externalReplacement!=null && !externalReplacement.isEmpty()){
+            prefix=prefix.replace(externalReplacement, externalReplaceWith);
+            suffix=suffix.replace(externalReplacement, externalReplaceWith);
+            
+        }
         return new SplitChatMessage(prefix,TextComponent.fromLegacyText(element),suffix);
+    }
+    
+    public static SplitChatMessage from(String message,String elementString){
+        return fromWithExternalReplacement(message,elementString,null,null);
     }
     
     public SplitChatMessage(BaseComponent[] prefix, BaseComponent[] content, BaseComponent[] suffix){
