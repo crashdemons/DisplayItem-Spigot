@@ -1,19 +1,32 @@
 displayitem:
+    #set the text that is replaced with the held item
     replacement: '[i]'
+    #how the item should appear in chat (using formatting codes and replacements)
     itemformat: '&f[&b%item%&r &ex%amount%&f]&r'
+    #how the item should appear when it has too many tags to safely display
     itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too long)&f]&r'
     
+    #enable or disable book names showing in chat (shows Written Book if disabled)
     usebooknameformat: true
+    #how the book name should appear (using formatting codes and replacements)
     booknameformat: '&o%booktitle%&r'
     
+    #whether to force a particular chat message format or keep the bukkit-provided format
     overridechatformat: false
+    #how the chat message line should appear (using formatting codes and replacements)
     format: '&r%displayname%&f: %message%'
     
+    #how many item-display records history to keep for detecting spam
     spamdetectionbuffer: 5
+    #sets within how many miliseconds a post in the history is considered spam
     spamthreshold: 2000
+    #sets an upper limit on the amount of JSON characters for the item to have a hover component
     jsonlimit: 10000
+    #sets the priority at which DisplayItem captures chat messages (lower=before other plugins)
     listenerpriority: NORMAL
+    #whether or not to send a ReplacedChatEvent out of courtesy to other plugins
     sendmodifiedchatevent: true
     messages:
+        #message displayed to a user when the item-replacement is detected as spam.
         cooldown: '&cPlease wait a few seconds before sharing your item again.'
     
