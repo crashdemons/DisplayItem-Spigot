@@ -3,19 +3,19 @@ displayitem:
     replacement: '[i]'
     #how the item should appear in chat (using formatting codes and replacements)
     itemformat: '&f[&b%item%&r &ex%amount%&f]&r'
-    #how the item should appear when it has too many tags to safely display
+    #how the item should appear when it has too many tags to safely display (see jsonlimit)
     itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too long)&f]&r'
-    
+
     #enable or disable book names showing in chat (shows Written Book if disabled)
     usebooknameformat: true
     #how the book name should appear (using formatting codes and replacements)
     booknameformat: '&o%booktitle%&r'
-    
-    #whether to force a particular chat message format or keep the bukkit-provided format
+
+    #whether to force a particular chat message format or keep the bukkit-event-provided format
     overridechatformat: false
     #how the chat message line should appear (using formatting codes and replacements)
     format: '&r%displayname%&f: %message%'
-    
+
     #how many item-display records history to keep for detecting spam
     spamdetectionbuffer: 5
     #sets within how many miliseconds a post in the history is considered spam
