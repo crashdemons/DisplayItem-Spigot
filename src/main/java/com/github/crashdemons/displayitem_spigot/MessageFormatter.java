@@ -112,7 +112,7 @@ public class MessageFormatter{
         if (canDisplayItem) {
             
             boolean usebookname = DisplayItem.plugin.getConfig().getBoolean("displayitem.usebooknameformat");
-            String bookformat = DisplayItem.plugin.getConfig().getString("displayitem.booknameformat");
+            String bookformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.booknameformat"));
             
             itemname = getItemName(item,bookformat,usebookname);
             if(!colorize) itemname = ChatColor.stripColor(itemname);
