@@ -58,12 +58,14 @@ public class ChatEventExecutor implements EventExecutor {
         
         
         boolean itemNeedsReplacing = message.contains(replacestr);
-        if(!player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
-        if(!player.hasPermission("displayitem.bypasscooldown")){
-            if(spampreventer.recordEvent(event).isSpam()){
-                String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
-                itemNeedsReplacing=false;
+        if(itemNeedsReplacing){
+            if(!player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
+            if(!player.hasPermission("displayitem.bypasscooldown")){
+                if(spampreventer.recordEvent(event).isSpam()){
+                    String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
+                    itemNeedsReplacing=false;
+                }
             }
         }
         
