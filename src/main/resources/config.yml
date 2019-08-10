@@ -31,4 +31,6 @@ displayitem:
     messages:
         #message displayed to a user when the item-replacement is detected as spam.
         cooldown: '&cPlease wait a few seconds before sharing your item again.'
+    integrations:
+        
     
