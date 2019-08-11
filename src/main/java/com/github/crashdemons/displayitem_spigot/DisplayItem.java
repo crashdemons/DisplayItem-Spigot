@@ -1,5 +1,6 @@
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.plugins.placeholderapi.PlaceholderSupport;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -9,9 +10,11 @@ public class DisplayItem extends JavaPlugin{
 
     public static DisplayItem plugin=null;
     private ChatListener listener=null;
+    private PlaceholderSupport placeholders = null;
     //private final DiscordSrvCompatibility discordSrv;
     
     public DisplayItem(){
+        placeholders =  new PlaceholderSupport(this);
         //discordSrv = new DiscordSrvCompatibility(this);
     }
 
@@ -25,6 +28,7 @@ public class DisplayItem extends JavaPlugin{
                 sender.sendMessage(ChatColor.GOLD + "DisplayItem reloaded");
             }
         }
+        placeholders.setSupportEnabled(getConfig().getBoolean("displayitem.integrations.placeholderapi"));
     }
 
     @Override
@@ -33,6 +37,7 @@ public class DisplayItem extends JavaPlugin{
         saveDefaultConfig();
         listener = new ChatListener();
         reload(false, null);
+        placeholders.activate(getConfig().getBoolean("displayitem.integrations.placeholderapi"));
     }
     
     @Override
