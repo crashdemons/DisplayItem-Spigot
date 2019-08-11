@@ -30,7 +30,7 @@ displayitem:
     sendmodifiedchatevent: true
     messages:
         #message displayed to a user when the item-replacement is detected as spam.
-        cooldown: '&cPlease wait a few seconds before sharing your item again.'
+        cooldown: '&cPlease wait %cooldown% seconds before sharing your item again.'
     integrations:
         placeholderapi: true
         
