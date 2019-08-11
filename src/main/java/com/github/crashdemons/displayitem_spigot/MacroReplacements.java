@@ -216,7 +216,11 @@ public class MacroReplacements {
                 if(item!=null) return getMaterialTypename(item.getType());
                 break;
             case "amount":
-                if(item!=null) return ""+item.getAmount();
+                if(item!=null){
+                    int amount=item.getAmount();
+                    if(amount==0) return "1";
+                    return ""+amount;
+                }
                 else return "1";
             case "booktitle":
                 if(book!=null && book.hasTitle()) return book.getTitle();
