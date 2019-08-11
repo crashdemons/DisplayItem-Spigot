@@ -43,10 +43,10 @@ public class ChatListener implements Listener {
             listenerpriority = EventPriority.valueOf(priorityString.toUpperCase());
             if(listenerpriority==EventPriority.MONITOR) throw new IllegalArgumentException("Monitor priority is not allowed for modification events");
         }catch(Exception e){
-            DisplayItem.plugin.getLogger().warning("Invalid priority value: "+priorityString);
+            DisplayItem.plugin.getLogger().info("Invalid priority value: "+priorityString);
             listenerpriority = EventPriority.NORMAL;
         }
-        DisplayItem.plugin.getLogger().warning("Listener priority: "+listenerpriority.name());
+        DisplayItem.plugin.getLogger().info("Listener priority: "+listenerpriority.name());
     }
     
     public void reload(){
