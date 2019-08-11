@@ -30,7 +30,9 @@ public class MacroReplacements {
         "booktitle",
         "bookauthor",
         "bookpages",
-        "message"
+        "message",
+        "cooldown",
+        "cooldownms"
     };
     private MacroReplacements(){}
     
@@ -233,6 +235,12 @@ public class MacroReplacements {
                 break;
             case "message":
                 return message;
+            case "cooldown":
+                double seconds = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold")/1000.0;
+                double roundOff = (double) Math.round(seconds * 100) / 100;
+                return ""+roundOff;
+            case "cooldownms":
+                return ""+DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
             default:
                 return null;
             
