@@ -45,7 +45,7 @@ public class MacroReplacements {
         public Player getPlayer(OfflinePlayer offplayer){
             if(offplayer!=null) offPlayer=offplayer;
             if(player==null && offplayer instanceof Player){
-                DisplayItem.plugin.getLogger().info("Player cache hit!");//TODO: remove debug
+//                DisplayItem.plugin.getLogger().info("Player cache hit!");//TXODO: remove debug
                 player = (Player) offplayer;
             }
             return player;
@@ -132,9 +132,9 @@ public class MacroReplacements {
     
     
     private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname,boolean colorize,CachedDetails details){
-        DisplayItem.plugin.getLogger().info("...replaceCached message "+replaceIn);//TODO: debug line
+//        DisplayItem.plugin.getLogger().info("...replaceCached message "+replaceIn);//TXODO: debug line
         if(DisplayItem.plugin.placeholders.isActive()){
-            DisplayItem.plugin.getLogger().info("....applying placeholders "+replaceIn);//TODO: debug line
+//            DisplayItem.plugin.getLogger().info("....applying placeholders "+replaceIn);//TXODO: debug line
             replaceIn = DisplayItem.plugin.placeholders.replaceAll(player, replaceIn);
         }
         for(String macroName : supported){
@@ -151,7 +151,7 @@ public class MacroReplacements {
         for(String macroName : supported){
             macroName+="NF";
             String macro = "%"+macroName+"%";
-            DisplayItem.plugin.getLogger().info("....checking macro "+macro + " vs "+replaceIn);//TODO: debug line
+//            DisplayItem.plugin.getLogger().info("....checking macro "+macro + " vs "+replaceIn);//TXODO: debug line
             if(!replaceIn.contains(macro)) continue;
             
             String replacement=requestMacroCached(player, messageValue, macroName, bookformat, usebookname, false, details);
@@ -161,14 +161,14 @@ public class MacroReplacements {
             }
             replaceIn = replaceIn.replace(macro, replacement);
         }
-        DisplayItem.plugin.getLogger().info("~~~replaceCached message "+replaceIn);//TODO: debug line
+//        DisplayItem.plugin.getLogger().info("~~~replaceCached message "+replaceIn);//TXODO: debug line
         return replaceIn;
     }
     
 
     
     private static String requestMacroCached(OfflinePlayer offPlayer, String message, String macroName, String bookformat, boolean usebookname,boolean colorize,CachedDetails details){
-        DisplayItem.plugin.getLogger().info("....reqMacroCached "+macroName+", message "+message);//TODO: debug line
+//        DisplayItem.plugin.getLogger().info("....reqMacroCached "+macroName+", message "+message);//TXODO: debug line
         boolean stripColors = macroName.toUpperCase().endsWith("NF");
         if(stripColors) macroName = macroName.substring(0, macroName.length() - 2);//remove "NF"
         if(macroName.contains("item") && !colorize) stripColors=true;
@@ -180,7 +180,7 @@ public class MacroReplacements {
     }
   
     private static String requestMacroCachedStripped(OfflinePlayer offPlayer, String message, String macroName, String bookformat, boolean usebookname,boolean colorize, CachedDetails details){
-        DisplayItem.plugin.getLogger().info(".....reqMacroStripped "+macroName+", message "+message);//TODO: debug line
+//        DisplayItem.plugin.getLogger().info(".....reqMacroStripped "+macroName+", message "+message);//TXODO: debug line
         String replacement = requestMacroCachedRaw(offPlayer, message, macroName, bookformat, usebookname, colorize, details);
         String stripped = ChatColor.stripColor(replacement);
         DisplayItem.plugin.getLogger().info(".....stripped "+stripped+" from "+replacement);
@@ -188,7 +188,7 @@ public class MacroReplacements {
     }
     
     private static String requestMacroCachedRaw(OfflinePlayer offPlayer, String message, String macroName, String bookformat, boolean usebookname,boolean colorize, CachedDetails details){
-        DisplayItem.plugin.getLogger().info("......reqMacroRaw "+macroName+", message "+message);//TODO: debug line
+//        DisplayItem.plugin.getLogger().info("......reqMacroRaw "+macroName+", message "+message);//TXODO: debug line
         Player player = details.getPlayer(offPlayer);
         ItemStack item = details.getItem(offPlayer);
         ItemMeta meta = details.getMeta(offPlayer);
