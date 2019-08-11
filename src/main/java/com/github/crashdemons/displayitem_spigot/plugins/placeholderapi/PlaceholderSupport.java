@@ -7,8 +7,8 @@ package com.github.crashdemons.displayitem_spigot.plugins.placeholderapi;
 
 import com.github.crashdemons.displayitem_spigot.plugins.CompatiblePlugin;
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -18,7 +18,7 @@ public class PlaceholderSupport extends CompatiblePlugin {
     public PlaceholderSupport(Plugin parentPlugin){
         super(parentPlugin,"PlaceholderAPI");
     }
-    public String replaceAll(Player player, String message){
+    public String replaceAll(OfflinePlayer player, String message){
         return PlaceholderAPI.setPlaceholders(player, message);
     }
 }

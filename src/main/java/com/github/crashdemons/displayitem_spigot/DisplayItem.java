@@ -10,7 +10,7 @@ public class DisplayItem extends JavaPlugin{
 
     public static DisplayItem plugin=null;
     private ChatListener listener=null;
-    private PlaceholderSupport placeholders = null;
+    public final PlaceholderSupport placeholders;
     //private final DiscordSrvCompatibility discordSrv;
     
     public DisplayItem(){

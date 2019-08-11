@@ -133,7 +133,10 @@ public class MacroReplacements {
     
     private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname,boolean colorize,CachedDetails details){
         DisplayItem.plugin.getLogger().info("...replaceCached message "+replaceIn);//TODO: debug line
-        
+        if(DisplayItem.plugin.placeholders.isActive()){
+            DisplayItem.plugin.getLogger().info("....applying placeholders "+replaceIn);//TODO: debug line
+            replaceIn = DisplayItem.plugin.placeholders.replaceAll(player, replaceIn);
+        }
         for(String macroName : supported){
             String macro = "%"+macroName+"%";
             if(!replaceIn.contains(macro)) continue;
