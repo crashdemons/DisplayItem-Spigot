@@ -1,0 +1,20 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.github.crashdemons.displayitem_spigot.plugins.placeholderapi;
+
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
+import com.github.crashdemons.displayitem_spigot.MacroReplacements;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+
+/**
+ *
+ * @author crashdemons (crashenator at gmail.com)
+ */
+public class DisplayItemExpansion extends PlaceholderExpansion  {
+    public String getVersion(){ return MacroReplacements.version; }
+    public String getAuthor(){ return "crashdemons"; }
+    public String getIdentifier(){return "DisplayItem";}
+}
