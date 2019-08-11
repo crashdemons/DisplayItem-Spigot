@@ -22,6 +22,8 @@ public class SplitChatMessage {
     public static SplitChatMessage fromWithExternalReplacement(String message, String elementString, String externalReplacement, String externalReplaceWith){
         int start = message.indexOf(elementString);
         int end = start + elementString.length();
+    //    DisplayItem.plugin.getLogger().info("split from extrepl "+message+" : "+elementString+" : "+externalReplacement+" : "+externalReplaceWith+" : "+start+" "+end);
+        
         String prefix = message.substring(0, start);
         String element = message.substring(start, end);
         String suffix = message.substring(end);

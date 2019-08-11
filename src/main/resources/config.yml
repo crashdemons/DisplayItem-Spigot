@@ -4,9 +4,9 @@ displayitem:
     #set the text that is replaced with the held item - may not contain the meta replacement string
     replacement: '[i]'
     #how the item should appear in chat (using formatting codes and replacements)
-    itemformat: '&f[&b%item%&r &ex%amount%&f]&r'
+    itemformat: '&f[&b%item%&r&e%XamountPL%&f]&r'
     #how the item should appear when it has too many tags to safely display (see jsonlimit)
-    itemtoolongformat: '&f[&b%item%&f &ex%amount%&f &c(too long)&f]&r'
+    itemtoolongformat: '&f[&b%item%&f&e%XamountPL%&f &c(too long)&f]&r'
 
     #enable or disable book names showing in chat (shows Written Book if disabled)
     usebooknameformat: true
