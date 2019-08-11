@@ -21,7 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class MacroReplacements {
-    public static final String version = "2.3.5";
+    //public static final String version = "2.4.0";
     private static final DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
     // Define the maximum number of decimals (number of symbols #)
     private static final DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
