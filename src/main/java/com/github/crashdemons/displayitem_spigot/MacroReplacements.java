@@ -214,11 +214,17 @@ public class MacroReplacements {
                 else return "Air";
                 //break;
             case "itemdisplayname":
-                if(meta!=null) return meta.getDisplayName();
+                if(meta!=null){
+                    if(!meta.hasDisplayName()) return "";
+                    return meta.getDisplayName();
+                }
                 else if(item==null) return "Air";
                 break;
             case "itemlocalizedname":
-                if(meta!=null) return meta.getLocalizedName();
+                if(meta!=null){
+                    if(!meta.hasLocalizedName()) return "";
+                    return meta.getLocalizedName();
+                }
                 else if(item==null) return "Air";
                 break;
             case "itemtype":
