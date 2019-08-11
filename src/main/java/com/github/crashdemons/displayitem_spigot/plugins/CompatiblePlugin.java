@@ -60,13 +60,18 @@ public abstract class CompatiblePlugin extends CompatiblePluginState implements 
     protected void onActivate(boolean enable){
         super.onActivate(enable);
         registerEvents();//we do this here because we cannot easily unregister all events later
-        if(enable){
-            if(!isPluginPresent()) parentPlugin.getLogger().info(pluginName + " not detected.");
-            if(!isSupportAvailable()) parentPlugin.getLogger().info(pluginName + " support not available.");
-            else parentPlugin.getLogger().info(pluginName + " support detected.");
-        }else{
-            parentPlugin.getLogger().info(pluginName + " support disabled.");
+        if(!isPluginPresent()){ parentPlugin.getLogger().info(pluginName + " not detected."); return; }
+        if(!isSupportAvailable()){ parentPlugin.getLogger().info(pluginName + " support not available."); return; }
+    }
+    @Override
+    protected void onEnable(){
+        if(isPluginPresent() && isSupportAvailable()){
+            parentPlugin.getLogger().info(pluginName + " support enabled by configuration."); 
         }
+    }
+    @Override
+    protected void onDisable(){
+        parentPlugin.getLogger().info(pluginName + " support disabled by configuration.");
     }
 
 
