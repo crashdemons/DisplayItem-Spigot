@@ -5,6 +5,9 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +22,10 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public class MacroReplacements {
     public static final String version = "2.3.5";
+    private static final DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+    // Define the maximum number of decimals (number of symbols #)
+    private static final DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
+    
     private static final String[] supported = new String[]{
         "displayname",
         "username",
@@ -237,8 +244,7 @@ public class MacroReplacements {
                 return message;
             case "cooldown":
                 double seconds = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold")/1000.0;
-                double roundOff = (double) Math.round(seconds * 100) / 100;
-                return ""+roundOff;
+                return df.format(seconds);
             case "cooldownms":
                 return ""+DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
             default:
