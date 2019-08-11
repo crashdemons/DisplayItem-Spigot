@@ -63,7 +63,9 @@ public class ChatEventExecutor implements EventExecutor {
             if(!player.hasPermission("displayitem.bypasscooldown")){
                 if(spampreventer.recordEvent(event).isSpam()){
                     String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', errormessage));
+                    errormessage = ChatColor.translateAlternateColorCodes('&', errormessage);
+                    errormessage = MacroReplacements.replaceAll(player, errormessage, message, "", false, true);
+                    player.sendMessage(errormessage);
                     itemNeedsReplacing=false;
                 }
             }
