@@ -37,10 +37,8 @@ public class ChatLineFormatter extends MessageFormatter{
         return chatLineFormat;
     }
     
-    private String formatChatLine(String chatLineFormat, String displayname, String message){
-            chatLineFormat = chatLineFormat.replace("%displayname%", displayname);
-            chatLineFormat = chatLineFormat.replace("%message%", message);
-            return chatLineFormat;
+    private String formatChatLine(Player player, String chatLineFormat, String message){
+        return MacroReplacements.replaceAll(player, chatLineFormat, message, "", false, false);
     }
     
     
@@ -51,7 +49,7 @@ public class ChatLineFormatter extends MessageFormatter{
         
         String displayname = getPlayerName(player);
         //use a temporary placeholder so that we can tell if the chat format added text before and/or after the message, not just after!
-        String chatLineX = formatChatLine(chatLineFormat, displayname, MESSAGE_REPLACEMENT_PLACEHOLDER);
+        String chatLineX = formatChatLine(player, chatLineFormat, MESSAGE_REPLACEMENT_PLACEHOLDER);
         //split the message into before, message, after parts.
         SplitChatMessage chatLineSplit = SplitChatMessage.from(chatLineX, MESSAGE_REPLACEMENT_PLACEHOLDER);
         
