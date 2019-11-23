@@ -34,12 +34,15 @@ public class MacroReplacements {
         "itemlocalizedname",
         "itemtype",
         "amount",
+        
         "booktitle",
+        
         "bookauthor",
         "bookpages",
         "message",
         "cooldown",
         "cooldownms",
+        
         "amountE",
         "amountX",
         "Xamount",
@@ -154,7 +157,8 @@ public class MacroReplacements {
                 return meta.getLocalizedName();
             }
             if(usebookname && book!=null){
-                return replaceAllCached(details.offPlayer,bookformat,"","",false,colorize,details);
+                String bookname = replaceAllCached(details.offPlayer,bookformat,"","",false,colorize,details);
+                if(!bookname.isEmpty()) return bookname;
             }
         }
         return getMaterialTypename(details.item.getType());
@@ -228,6 +232,13 @@ public class MacroReplacements {
         return "";
     }
     
+    private static String getBookTitle(BookMeta book, String defaultTitle){
+        String title = "";
+        if(book!=null && book.hasTitle()) title = book.getTitle();
+        if(title==null || title.isEmpty()) title = defaultTitle;
+        return title;
+    }
+    
     private static String requestMacroCachedRaw(String macroName, MacroParameters params){
 //        DisplayItem.plugin.getLogger().info("......reqMacroRaw "+macroName+", message="+params.message);//TXODO: debug line
         Player player = params.details.getPlayer(params.offPlayer);
@@ -293,8 +304,7 @@ public class MacroReplacements {
                 }
                 else return "";
             case "booktitle":
-                if(book!=null && book.hasTitle()) return book.getTitle();
-                break;
+                return getBookTitle(book, "");
             case "bookauthor":
                 if(book!=null && book.hasAuthor()) return book.getAuthor();
                 break;
