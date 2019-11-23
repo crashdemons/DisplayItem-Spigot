@@ -36,6 +36,8 @@ public class MacroReplacements {
         "itemtype",
         "amount",
         "booktitle",
+        "booktitleT",
+        "booktitleU",
         "bookauthor",
         "bookpages",
         "message",
@@ -364,6 +366,10 @@ public class MacroReplacements {
                 }
             case "booktitle":
                 return getBookTitle(book, "");
+            case "booktitleT":
+                return getBookTitle(book, getMaterialTypename(item.getType()));
+            case "booktitleU":
+                return getBookTitle(book, "Untitled");
             case "bookauthor":
                 if (book != null && book.hasAuthor()) {
                     return book.getAuthor();
