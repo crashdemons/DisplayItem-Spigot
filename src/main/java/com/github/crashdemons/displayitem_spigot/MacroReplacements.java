@@ -21,11 +21,12 @@ import org.bukkit.inventory.meta.ItemMeta;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class MacroReplacements {
+
     //public static final String version = "2.4.0";
     private static final DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
     // Define the maximum number of decimals (number of symbols #)
     private static final DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
-    
+
     private static final String[] supported = new String[]{
         "displayname",
         "username",
@@ -34,119 +35,126 @@ public class MacroReplacements {
         "itemlocalizedname",
         "itemtype",
         "amount",
-        
         "booktitle",
-        
         "bookauthor",
         "bookpages",
         "message",
         "cooldown",
         "cooldownms",
-        
         "amountE",
         "amountX",
-        "Xamount",
-    };
+        "Xamount",};
     private static final String[] paddingSuffixes = new String[]{
         "",
         "PL",
-        "PR",
-    };
+        "PR",};
     private static final String[] formatSuffixes = new String[]{
         "",
-        "NF",
-    };
-    
-    private MacroReplacements(){}
-    
-    
-    
-    private static class CachedDetails{
+        "NF",};
+
+    private MacroReplacements() {
+    }
+
+    private static class CachedDetails {
+
         public OfflinePlayer offPlayer = null;
         public Player player = null;
-        public ItemStack item=null;
+        public ItemStack item = null;
         public ItemMeta meta = null;
         public BookMeta book = null;
-        public Player getPlayer(OfflinePlayer offplayer){
-            if(offplayer!=null) offPlayer=offplayer;
-            if(player==null && offplayer instanceof Player){
+
+        public Player getPlayer(OfflinePlayer offplayer) {
+            if (offplayer != null) {
+                offPlayer = offplayer;
+            }
+            if (player == null && offplayer instanceof Player) {
 //                DisplayItem.plugin.getLogger().info("Player cache hit!");//TXODO: remove debug
                 player = (Player) offplayer;
             }
             return player;
         }
-        public ItemStack getItem(OfflinePlayer offplayer){
-            if(item==null){
+
+        public ItemStack getItem(OfflinePlayer offplayer) {
+            if (item == null) {
                 getPlayer(offplayer);
-                if(player!=null) item = player.getInventory().getItemInMainHand();
+                if (player != null) {
+                    item = player.getInventory().getItemInMainHand();
+                }
                 //if(item==null) item = new ItemStack(Material.AIR,1);
             }
             return item;
         }
-        public ItemMeta getMeta(OfflinePlayer offplayer){
-            if(meta==null){
+
+        public ItemMeta getMeta(OfflinePlayer offplayer) {
+            if (meta == null) {
                 getItem(offplayer);
-                if(item!=null && item.hasItemMeta()) meta=item.getItemMeta();
+                if (item != null && item.hasItemMeta()) {
+                    meta = item.getItemMeta();
+                }
             }
             return meta;
         }
-        public BookMeta getBook(OfflinePlayer offplayer){
-            if(book==null){
+
+        public BookMeta getBook(OfflinePlayer offplayer) {
+            if (book == null) {
                 getMeta(offplayer);
-                if(meta instanceof BookMeta) book=(BookMeta) meta;
+                if (meta instanceof BookMeta) {
+                    book = (BookMeta) meta;
+                }
             }
             return book;
         }
     }
-    
-    private static class MacroParameters{
+
+    private static class MacroParameters {
+
         OfflinePlayer offPlayer;
         String message;
         String bookformat;
         boolean usebookname;
         boolean colorize;
         CachedDetails details;
-        public MacroParameters(OfflinePlayer offPlayer, String message, String bookformat, boolean usebookname,boolean colorize, CachedDetails details){
-            this.offPlayer=offPlayer;
-            this.message=message;
-            this.bookformat=bookformat;
-            this.usebookname=usebookname;
-            this.colorize=colorize;
-            this.details=details;
+
+        public MacroParameters(OfflinePlayer offPlayer, String message, String bookformat, boolean usebookname, boolean colorize, CachedDetails details) {
+            this.offPlayer = offPlayer;
+            this.message = message;
+            this.bookformat = bookformat;
+            this.usebookname = usebookname;
+            this.colorize = colorize;
+            this.details = details;
         }
     }
-    
-    private static String camelCase(String str)
-    {
+
+    private static String camelCase(String str) {
         StringBuilder builder = new StringBuilder(str);
         // Flag to keep track if last visited character is a 
         // white space or not
         boolean isLastSpace = true;
 
         // Iterate String from beginning to end.
-        for(int i = 0; i < builder.length(); i++)
-        {
-                char ch = builder.charAt(i);
+        for (int i = 0; i < builder.length(); i++) {
+            char ch = builder.charAt(i);
 
-                if(isLastSpace && ch >= 'a' && ch <='z')
-                {
-                        // Character need to be converted to uppercase
-                        builder.setCharAt(i, (char)(ch + ('A' - 'a') ));
-                        isLastSpace = false;
-                }else if (ch != ' ')
-                        isLastSpace = false;
-                else
-                        isLastSpace = true;
+            if (isLastSpace && ch >= 'a' && ch <= 'z') {
+                // Character need to be converted to uppercase
+                builder.setCharAt(i, (char) (ch + ('A' - 'a')));
+                isLastSpace = false;
+            } else if (ch != ' ') {
+                isLastSpace = false;
+            } else {
+                isLastSpace = true;
+            }
         }
 
         return builder.toString();
     }
-    private static String getMaterialTypename(Material mat){
+
+    private static String getMaterialTypename(Material mat) {
         return camelCase(mat.name().toLowerCase().replace("_", " "));
-        
+
     }
-    
-    private static String getItemName(CachedDetails details, String bookformat, boolean usebookname,boolean colorize) {
+
+    private static String getItemName(CachedDetails details, String bookformat, boolean usebookname, boolean colorize) {
         ItemMeta meta = details.meta;
         BookMeta book = details.book;
         if (meta != null) {
@@ -156,41 +164,45 @@ public class MacroReplacements {
             if (meta.hasLocalizedName()) {
                 return meta.getLocalizedName();
             }
-            if(usebookname && book!=null){
-                String bookname = replaceAllCached(details.offPlayer,bookformat,"","",false,colorize,details);
-                if(!bookname.isEmpty()) return bookname;
+            if (usebookname && book != null) {
+                String bookname = replaceAllCached(details.offPlayer, bookformat, "", "", false, colorize, details);
+                if (!bookname.isEmpty()) {
+                    return bookname;
+                }
             }
         }
         return getMaterialTypename(details.item.getType());
     }
-    
-    public static String replaceAll(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname,boolean colorize){
+
+    public static String replaceAll(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, boolean colorize) {
         CachedDetails details = new CachedDetails();
-        return replaceAllCached(player,  replaceIn, messageValue,  bookformat,  usebookname,colorize, details);
+        return replaceAllCached(player, replaceIn, messageValue, bookformat, usebookname, colorize, details);
     }
-    public static String requestMacroUncached(OfflinePlayer offPlayer, String message, String macroName, String bookformat,boolean colorize, boolean usebookname){
-        MacroParameters params = new MacroParameters(offPlayer,  message, bookformat, usebookname, colorize, new CachedDetails());
-        return requestMacroCached(macroName, "","", params);
+
+    public static String requestMacroUncached(OfflinePlayer offPlayer, String message, String macroName, String bookformat, boolean colorize, boolean usebookname) {
+        MacroParameters params = new MacroParameters(offPlayer, message, bookformat, usebookname, colorize, new CachedDetails());
+        return requestMacroCached(macroName, "", "", params);
     }
-    
-    
-    private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname,boolean colorize,CachedDetails details){
+
+    private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, boolean colorize, CachedDetails details) {
 //        DisplayItem.plugin.getLogger().info("...replaceCached replace "+replaceIn+" message="+messageValue);//TXODO: debug line
-        if(DisplayItem.plugin.placeholders.isActive()){
+        if (DisplayItem.plugin.placeholders.isActive()) {
 //            DisplayItem.plugin.getLogger().info("....applying placeholders "+replaceIn);//TXODO: debug line
             replaceIn = DisplayItem.plugin.placeholders.replaceAll(player, replaceIn);
         }
-        
-        MacroParameters params = new MacroParameters(player,  messageValue, bookformat, usebookname, colorize, new CachedDetails());
-        for(String formatSuffix : formatSuffixes){
-            for(String paddingSuffix : paddingSuffixes){
-                for(String macroName : supported){
-                    String macro = "%"+macroName + paddingSuffix + formatSuffix+"%";
-                    if(!replaceIn.contains(macro)) continue;
 
-                    String replacement=requestMacroCached(macroName, paddingSuffix, formatSuffix, params);
-                    if(replacement==null){
- //                       DisplayItem.plugin.getLogger().severe("Attempted to automatically replace unsupported macro: "+macroName);
+        MacroParameters params = new MacroParameters(player, messageValue, bookformat, usebookname, colorize, new CachedDetails());
+        for (String formatSuffix : formatSuffixes) {
+            for (String paddingSuffix : paddingSuffixes) {
+                for (String macroName : supported) {
+                    String macro = "%" + macroName + paddingSuffix + formatSuffix + "%";
+                    if (!replaceIn.contains(macro)) {
+                        continue;
+                    }
+
+                    String replacement = requestMacroCached(macroName, paddingSuffix, formatSuffix, params);
+                    if (replacement == null) {
+                        //                       DisplayItem.plugin.getLogger().severe("Attempted to automatically replace unsupported macro: "+macroName);
                         continue;
                     }
                     replaceIn = replaceIn.replace(macro, replacement);
@@ -200,131 +212,170 @@ public class MacroReplacements {
 //        DisplayItem.plugin.getLogger().info("~~~replaceCached message "+replaceIn);//TXODO: debug line
         return replaceIn;
     }
-    
 
-    
-    private static String requestMacroCached(String macroName, String paddingSuffix, String formatSuffix, MacroParameters params){
- //       DisplayItem.plugin.getLogger().info("....reqMacroCached "+macroName+", message="+params.message);//TXODO: debug line
+    private static String requestMacroCached(String macroName, String paddingSuffix, String formatSuffix, MacroParameters params) {
+        //       DisplayItem.plugin.getLogger().info("....reqMacroCached "+macroName+", message="+params.message);//TXODO: debug line
         boolean stripColors = formatSuffix.equals("NF");
-        if(macroName.contains("item") && !params.colorize) stripColors=true;
+        if (macroName.contains("item") && !params.colorize) {
+            stripColors = true;
+        }
         String replacement = requestMacroCachedPadded(macroName, paddingSuffix, formatSuffix, params);
-        if(stripColors) return ChatColor.stripColor(replacement);
+        if (stripColors) {
+            return ChatColor.stripColor(replacement);
+        }
         return replacement;
     }
-    
-    private static String requestMacroCachedPadded(String macroName, String paddingSuffix, String formatSuffix, MacroParameters params){
+
+    private static String requestMacroCachedPadded(String macroName, String paddingSuffix, String formatSuffix, MacroParameters params) {
 //        DisplayItem.plugin.getLogger().info(" fmt "+paddingSuffix+" from "+macroName);
         String resultBase = requestMacroCachedRaw(macroName, params);
-        
+
 //        DisplayItem.plugin.getLogger().info(" fmt  proc "+paddingSuffix+" from "+macroName+" to "+resultBase);
-        
-        switch(paddingSuffix){
+        switch (paddingSuffix) {
             case "PL":
-                if(resultBase.isEmpty()) return resultBase;
-                return " "+resultBase;
+                if (resultBase.isEmpty()) {
+                    return resultBase;
+                }
+                return " " + resultBase;
             case "PR":
-                if(resultBase.isEmpty()) return resultBase;
-                return resultBase+" ";
+                if (resultBase.isEmpty()) {
+                    return resultBase;
+                }
+                return resultBase + " ";
             case "":
                 return resultBase;
         }
-        
+
         return "";
     }
-    
-    private static String getBookTitle(BookMeta book, String defaultTitle){
+
+    private static String getBookTitle(BookMeta book, String defaultTitle) {
         String title = "";
-        if(book!=null && book.hasTitle()) title = book.getTitle();
-        if(title==null || title.isEmpty()) title = defaultTitle;
+        if (book != null && book.hasTitle()) {
+            title = book.getTitle();
+        }
+        if (title == null || title.isEmpty()) {
+            title = defaultTitle;
+        }
         return title;
     }
-    
-    private static String requestMacroCachedRaw(String macroName, MacroParameters params){
+
+    private static String requestMacroCachedRaw(String macroName, MacroParameters params) {
 //        DisplayItem.plugin.getLogger().info("......reqMacroRaw "+macroName+", message="+params.message);//TXODO: debug line
         Player player = params.details.getPlayer(params.offPlayer);
         ItemStack item = params.details.getItem(params.offPlayer);
         ItemMeta meta = params.details.getMeta(params.offPlayer);
         BookMeta book = params.details.getBook(params.offPlayer);
-        switch(macroName){
+        switch (macroName) {
             case "displayname":
 //                DisplayItem.plugin.getLogger().info("....... player="+(player!=null));
- //               DisplayItem.plugin.getLogger().info("....... player="+(player.getDisplayName()));
-                if(player!=null) return player.getDisplayName();
+                //               DisplayItem.plugin.getLogger().info("....... player="+(player.getDisplayName()));
+                if (player != null) {
+                    return player.getDisplayName();
+                }
                 break;
             case "username":
-                if(player!=null) return player.getName();
+                if (player != null) {
+                    return player.getName();
+                }
                 break;
             case "item":
-                if(item!=null) return getItemName(params.details, params.bookformat, params.usebookname, params.colorize);
-                else return "Air";
-                //break;
-            case "itemdisplayname":
-                if(meta!=null){
-                    if(!meta.hasDisplayName()) return "";
-                    return meta.getDisplayName();
+                if (item != null) {
+                    return getItemName(params.details, params.bookformat, params.usebookname, params.colorize);
+                } else {
+                    return "Air";
                 }
-                else if(item==null) return "Air";
+            //break;
+            case "itemdisplayname":
+                if (meta != null) {
+                    if (!meta.hasDisplayName()) {
+                        return "";
+                    }
+                    return meta.getDisplayName();
+                } else if (item == null) {
+                    return "Air";
+                }
                 break;
             case "itemlocalizedname":
-                if(meta!=null){
-                    if(!meta.hasLocalizedName()) return "";
+                if (meta != null) {
+                    if (!meta.hasLocalizedName()) {
+                        return "";
+                    }
                     return meta.getLocalizedName();
+                } else if (item == null) {
+                    return "Air";
                 }
-                else if(item==null) return "Air";
                 break;
             case "itemtype":
-                if(item!=null) return getMaterialTypename(item.getType());
+                if (item != null) {
+                    return getMaterialTypename(item.getType());
+                }
                 break;
             case "amount":
-                if(item!=null){
-                    int amount=item.getAmount();
-                    if(amount==0) return "1";
-                    return ""+amount;
+                if (item != null) {
+                    int amount = item.getAmount();
+                    if (amount == 0) {
+                        return "1";
+                    }
+                    return "" + amount;
+                } else {
+                    return "1";
                 }
-                else return "1";
             case "amountE":
-                if(item!=null){
-                    int amount=item.getAmount();
-                    if(amount<=1) return "";
-                    return ""+amount;
+                if (item != null) {
+                    int amount = item.getAmount();
+                    if (amount <= 1) {
+                        return "";
+                    }
+                    return "" + amount;
+                } else {
+                    return "";
                 }
-                else return "";
             case "amountX":
-                if(item!=null){
-                    int amount=item.getAmount();
-                    if(amount<=1) return "";
-                    return amount+"x";
+                if (item != null) {
+                    int amount = item.getAmount();
+                    if (amount <= 1) {
+                        return "";
+                    }
+                    return amount + "x";
+                } else {
+                    return "";
                 }
-                else return "";
             case "Xamount":
-                if(item!=null){
-                    int amount=item.getAmount();
-                    if(amount<=1) return "";
-                    return "x"+amount;
+                if (item != null) {
+                    int amount = item.getAmount();
+                    if (amount <= 1) {
+                        return "";
+                    }
+                    return "x" + amount;
+                } else {
+                    return "";
                 }
-                else return "";
             case "booktitle":
                 return getBookTitle(book, "");
             case "bookauthor":
-                if(book!=null && book.hasAuthor()) return book.getAuthor();
+                if (book != null && book.hasAuthor()) {
+                    return book.getAuthor();
+                }
                 break;
             case "bookpages":
-                if(book!=null && book.hasPages()) return ""+book.getPages().size();
+                if (book != null && book.hasPages()) {
+                    return "" + book.getPages().size();
+                }
                 break;
             case "message":
 //                DisplayItem.plugin.getLogger().info("....... message="+(params.message));
                 return params.message;
             case "cooldown":
-                double seconds = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold")/1000.0;
+                double seconds = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold") / 1000.0;
                 return df.format(seconds);
             case "cooldownms":
-                return ""+DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
+                return "" + DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
             default:
                 return null;
         }
-        
+
         return "";
     }
-    
- 
+
 }
