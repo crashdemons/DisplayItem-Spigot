@@ -124,6 +124,16 @@ public class MacroReplacements {
             this.details = details;
         }
     }
+    /*
+    private static String strDebug(String str){
+        String out = "";
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            out += (int) c;
+            out += ".";
+        }
+        return out;
+    }*/
 
     private static String camelCase(String str) {
         StringBuilder builder = new StringBuilder(str);
@@ -166,7 +176,8 @@ public class MacroReplacements {
             }
             if (usebookname && book != null) {
                 String bookname = replaceAllCached(details.offPlayer, bookformat, "", "", false, colorize, details);
-                if (!bookname.isEmpty()) {
+                //DisplayItem.plugin.getLogger().info("...getItemName usebookname: bookname="+bookname+"|"+strDebug(bookname)+" len="+bookname.length()+" bookformat="+bookformat);//TXODO: debug line
+                if (!ChatColor.stripColor(bookname).isEmpty()) {
                     return bookname;
                 }
             }
