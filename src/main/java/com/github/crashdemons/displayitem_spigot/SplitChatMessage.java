@@ -22,6 +22,11 @@ public class SplitChatMessage {
     public static SplitChatMessage fromWithExternalReplacement(String message, String elementString, String externalReplacement, String externalReplaceWith){
         int start = message.indexOf(elementString);
         int end = start + elementString.length();
+        
+        if(start==-1){
+            throw new IllegalArgumentException("The requested element-string was not located in the message: <"+elementString+">, <"+message+">");
+        }
+        
     //    DisplayItem.plugin.getLogger().info("split from extrepl "+message+" : "+elementString+" : "+externalReplacement+" : "+externalReplaceWith+" : "+start+" "+end);
         
         String prefix = message.substring(0, start);
