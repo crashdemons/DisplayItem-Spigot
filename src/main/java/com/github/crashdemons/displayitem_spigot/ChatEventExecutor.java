@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.EventExecutor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -47,7 +48,7 @@ public class ChatEventExecutor implements EventExecutor {
         onChat(event);
     }
     
-    public void onChat(AsyncPlayerChatEvent event){
+    public void onChat(@NotNull AsyncPlayerChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
         Player player = event.getPlayer();
         String format = event.getFormat();
