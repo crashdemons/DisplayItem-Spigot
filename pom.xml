@@ -17,6 +17,10 @@
             <url>https://meme.tips/java-repos/</url>
         </repository>
         <repository>
+            <id>bungeecord-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
             <id>md_5-releases</id>
             <url>http://repo.md-5.net/content/repositories/releases/</url>
         </repository>
@@ -38,12 +42,12 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>1.13-SNAPSHOT</version>
+            <version>1.15-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>[1.14.4-R0.1-SNAPSHOT]</version>
+            <version>[1.15.1-R0.1-SNAPSHOT]</version>
         </dependency>
         <dependency>
          <groupId>me.clip</groupId>
