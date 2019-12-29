@@ -42,6 +42,15 @@ public abstract class EventSpamPreventer {
         next = (next+1)%recordCount;
     }
     
+    
+    /**
+     * Checks an event against internal storage and returns a spam check result.
+     * 
+     * @param event the event to record and check.
+     * @return the SpamResult associated with spam checks done by this method.
+     */
+    public abstract SpamResult checkEvent(Event event);
+    
     /**
      * Records an event in internal storage and returns a spam check result.
      * 

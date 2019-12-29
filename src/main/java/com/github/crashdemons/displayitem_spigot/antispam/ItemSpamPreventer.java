@@ -1,6 +1,7 @@
 package com.github.crashdemons.displayitem_spigot.antispam;
 
 import java.util.UUID;
+import org.bukkit.event.Event;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -40,29 +41,27 @@ public class ItemSpamPreventer extends EventSpamPreventer {
             return false;
         }
     }
-
+    
     @Override
-    public SpamResult recordEvent(org.bukkit.event.Event event) {
+    public SpamResult checkEvent(Event event){
         if (event instanceof PlayerInteractEvent) {
             return recordEvent((PlayerInteractEvent) event);
         }
         return new SpamResult(false);
     }
+    
 
-    /**
-     * Records an interaction event internally and prepares a result after
-     * analyzing the event.
-     * <p>
-     * For the current implementation, a click to the same block location by the
-     * same user within 1 second is considered spam (within 5 click records).
-     *
-     * @param event The PlayerInteractEvent to send to the spam-preventer.
-     * @return The Spam-detection Result object
-     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
-     */
-    public synchronized SpamResult recordEvent(AsyncPlayerChatEvent event) {
+    @Override
+    public SpamResult recordEvent(Event event) {
+        if (event instanceof PlayerInteractEvent) {
+            return recordEvent((PlayerInteractEvent) event);
+        }
+        return new SpamResult(false);
+    }
+    
+    
+    private SpamResult checkRecord(ItemRecord record){
         SpamResult result = new SpamResult(false);
-        ItemRecord record = new ItemRecord(event);
         for (EventSpamRecord otherRecordObj : records) {
             ItemRecord otherRecord = (ItemRecord) otherRecordObj;
             if (record.closeTo(otherRecord)) {
@@ -70,6 +69,33 @@ public class ItemSpamPreventer extends EventSpamPreventer {
                 break;
             }
         }
+        return result;
+    }
+    
+    /**
+     * Checks an interaction event internally and prepares a result after
+     * analyzing the event.
+     *
+     * @param event The PlayerInteractEvent to send to the spam-preventer.
+     * @return The Spam-detection Result object
+     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
+     */
+    public synchronized SpamResult checkEvent(AsyncPlayerChatEvent event){//TODO: need combined synchronization with recordEvent
+        return checkRecord(new ItemRecord(event));
+    }
+    
+
+    /**
+     * Records an interaction event internally and prepares a result after
+     * analyzing the event.
+     *
+     * @param event The PlayerInteractEvent to send to the spam-preventer.
+     * @return The Spam-detection Result object
+     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
+     */
+    public synchronized SpamResult recordEvent(AsyncPlayerChatEvent event) {
+        ItemRecord record = new ItemRecord(event);
+        SpamResult result = checkRecord(record);
         addRecord(record);
         return result;
     }
