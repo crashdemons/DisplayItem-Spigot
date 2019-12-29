@@ -60,6 +60,7 @@ public class ItemSpamPreventer extends EventSpamPreventer {
     }
     
     
+    //Check a new record for spam against recorded ones - NOTE: this is not synchronized or thread-safe on its own!
     private SpamResult checkRecord(ItemRecord record){
         SpamResult result = new SpamResult(false);
         for (EventSpamRecord otherRecordObj : records) {
@@ -80,8 +81,10 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * @return The Spam-detection Result object
      * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
      */
-    public synchronized SpamResult checkEvent(AsyncPlayerChatEvent event){//TODO: need combined synchronization with recordEvent
-        return checkRecord(new ItemRecord(event));
+    public SpamResult checkEvent(AsyncPlayerChatEvent event){//TODO: need combined synchronization with recordEvent
+        synchronized(records){
+            return checkRecord(new ItemRecord(event));
+        }
     }
     
 
@@ -93,10 +96,12 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * @return The Spam-detection Result object
      * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
      */
-    public synchronized SpamResult recordEvent(AsyncPlayerChatEvent event) {
-        ItemRecord record = new ItemRecord(event);
-        SpamResult result = checkRecord(record);
-        addRecord(record);
-        return result;
+    public SpamResult recordEvent(AsyncPlayerChatEvent event) {
+        synchronized(records){
+            ItemRecord record = new ItemRecord(event);
+            SpamResult result = checkRecord(record);
+            addRecord(record);
+            return result;
+        }
     }
 }
