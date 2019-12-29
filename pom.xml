@@ -40,6 +40,11 @@
     
     <dependencies>
         <dependency>
+          <groupId>org.jetbrains</groupId>
+          <artifactId>annotations</artifactId>
+          <version>15.0</version>
+        </dependency>
+        <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
             <version>1.15-SNAPSHOT</version>
