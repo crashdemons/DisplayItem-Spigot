@@ -56,7 +56,7 @@ public abstract class EventSpamPreventer {
         EventSpamRecord minRecord=null;
         
         for(int n=0; n<recordCount; n++){//only check each of the records once.
-            if(records[i].matches(record)){//the records are validly matched (using event criteria)
+            if(records[i]!=null && records[i].matches(record)){//the records are validly matched (using event criteria)
                 long timeBetween = records[i].timeFrom(record);
                 if(minRecord==null || timeBetween < minTimeBetween){
                     minTimeBetween = timeBetween;
