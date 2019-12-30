@@ -22,7 +22,7 @@ displayitem:
     spamdetectionbuffer: 5
     #sets within how many miliseconds a post in the history is considered spam
     spamthreshold: 2000
-    #sets whether a blocked spam-post resets the spam timer (each failed post makes the user wait longer) - prior to 2.4.2, the behavior of this was 'true'.
+    #sets whether a detected spam-post resets the spam timer (each failed post makes the user wait the full duration again) - prior to 2.4.2, the behavior of this was 'true'.
     spamdetectionsresetcooldown: false
     
     
