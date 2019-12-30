@@ -26,6 +26,7 @@ public class MacroReplacements {
     private static final DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
     // Define the maximum number of decimals (number of symbols #)
     private static final DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
+    private static final DecimalFormat dfS = new DecimalFormat("#", otherSymbols);
 
     private static final String[] supported = new String[]{
         "displayname",
@@ -42,8 +43,10 @@ public class MacroReplacements {
         "bookpages",
         "message",
         "cooldown",
+        "cooldownS",
         "cooldownms",
         "cooldownremainder",
+        "cooldownremainderS",
         "cooldownremainderms",
         "amountE",
         "amountX",
@@ -390,12 +393,19 @@ public class MacroReplacements {
             case "cooldown":
                 double seconds = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold") / 1000.0;
                 return df.format(seconds);
+            case "cooldownS":
+                double secondsS = Math.ceil( DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold") / 1000.0 );
+                return dfS.format(secondsS);
             case "cooldownms":
                 return "" + DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
             case "cooldownremainder":
                 if(params.cooldownremainder==-1) return "unknown";
                 double cseconds = params.cooldownremainder / 1000.0;
                 return df.format(cseconds);
+            case "cooldownremainderS":
+                if(params.cooldownremainder==-1) return "unknown";
+                double csecondsS = Math.ceil( params.cooldownremainder / 1000.0 );
+                return dfS.format(csecondsS);
             case "cooldownremainderms":
                 if(params.cooldownremainder==-1) return "unknown";
                 return ""+params.cooldownremainder;
