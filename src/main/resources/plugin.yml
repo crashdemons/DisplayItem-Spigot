@@ -1,5 +1,5 @@
 name: DisplayItem
-version: ${project.version}
+version: ${project.version}-${timestamp}
 description: DisplayItem
 author: crashdemons
 api-version: 1.13
