@@ -21,7 +21,7 @@ permissions:
         default: false
         children:
             displayitem.reload: true
-            displayitem:replace: true
+            displayitem.replace: true
 
     displayitem.reload:
         description: Give permission to use the reload command
