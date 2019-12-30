@@ -24,12 +24,12 @@ public class ChatListener implements Listener {
     
     public void registerEvents(){
         Bukkit.getServer().getPluginManager().registerEvent(AsyncPlayerChatEvent.class, this, listenerpriority, new ChatEventExecutor(this,listenerpriority), DisplayItem.plugin, true);
-        DisplayItem.plugin.getLogger().warning("Registered listener");
+        DisplayItem.plugin.getLogger().info("Registered listener");
     }
     
     public void unregisterEvents(){
         HandlerList.unregisterAll(this);
-        DisplayItem.plugin.getLogger().warning("Unregistered listener");
+        DisplayItem.plugin.getLogger().info("Unregistered listener");
     }
     
     public void reloadEvents(){
