@@ -6,6 +6,7 @@
 package com.github.crashdemons.displayitem_spigot;
 
 import com.github.crashdemons.displayitem_spigot.antispam.ItemSpamPreventer;
+import com.github.crashdemons.displayitem_spigot.antispam.SpamResult;
 import com.github.crashdemons.displayitem_spigot.events.ReplacedChatEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -62,10 +63,16 @@ public class ChatEventExecutor implements EventExecutor {
         if(!player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
         if(itemNeedsReplacing){
             if(!player.hasPermission("displayitem.bypasscooldown")){
-                if(spampreventer.recordEvent(event).isSpam()){
+                
+                
+                boolean detectionsResetTimer = DisplayItem.plugin.getConfig().getBoolean("displayitem.spamdetectionsresetcooldown");
+                boolean recordEventConditionally = !detectionsResetTimer;//detections reset the cooldown by recording everything (unconditionally)
+                SpamResult spamResult = spampreventer.recordEvent(event,recordEventConditionally,false);
+                if(spamResult.isSpam()){
+                    long cooldown = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
                     String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
                     errormessage = ChatColor.translateAlternateColorCodes('&', errormessage);
-                    errormessage = MacroReplacements.replaceAll(player, errormessage, message, "", false, true);
+                    errormessage = MacroReplacements.replaceAll(player, errormessage, message, "", false, spamResult.getTimeUntil(cooldown), true);
                     player.sendMessage(errormessage);
                     itemNeedsReplacing=false;
                 }

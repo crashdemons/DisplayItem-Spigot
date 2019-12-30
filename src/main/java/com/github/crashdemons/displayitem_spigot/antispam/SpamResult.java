@@ -15,15 +15,18 @@ package com.github.crashdemons.displayitem_spigot.antispam;
  */
 public class SpamResult {
 
+    private long minTimeBetween;
     private boolean spam;
 
     /**
      * <b><i>[INTERNAL - DO NOT USE]</i></b> Constructs a spam result
      *
      * @param spam the internal boolean state to abstract
+     * @param minTimeBetween the smallest time between spam records. The time before the next allowed event would be (threshold-minTimeBetween)
      */
-    public SpamResult(boolean spam) {
+    public SpamResult(boolean spam, long minTimeBetween) {
         this.spam = spam;
+        this.minTimeBetween = minTimeBetween;
     }
 
     /**
@@ -36,6 +39,26 @@ public class SpamResult {
      */
     public boolean isSpam() {
         return spam;
+    }
+    
+    /**
+     * the smallest time (in milliseconds) between spam records. The time before the next allowed event would be (threshold-minTimeBetween)
+     * @return the (minimum) time between the event and a matching spam record.
+     */
+    public long getDetectionTime(){
+        return minTimeBetween;
+    }
+    
+    /**
+     * Gets the time in milliseconds until a threshold is fulfilled,
+     * considering the time between the event and the most recent spam record.
+     * @param thresholdMs the threshold between spam records to fulfill
+     * @return the time remaining until the threshold is fulfilled.
+     */
+    public long getTimeUntil(long thresholdMs){
+        long diff = thresholdMs-minTimeBetween;
+        if(diff<0) return 0;
+        return diff;
     }
 
     /**

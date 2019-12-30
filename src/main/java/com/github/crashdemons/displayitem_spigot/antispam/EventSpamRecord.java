@@ -20,6 +20,15 @@ public abstract class EventSpamRecord {
     private final long timestamp;
 
     /**
+     * Determines the time between this record and another, represented as an absolute value.
+     * @param record the other record to compare.
+     * @return the (positive) number of miliseconds between the two records.
+     */
+    public long timeFrom(EventSpamRecord record){
+        return  Math.abs(record.timestamp - timestamp);
+    }
+    
+    /**
      * Determines if the record is "close to" another record by comparing
      * timestamps against a time threshold.
      *
@@ -30,8 +39,7 @@ public abstract class EventSpamRecord {
      * parameters.
      */
     public boolean closeTo(EventSpamRecord record, long thresholdMs) {
-        long diff = Math.abs(record.timestamp - timestamp);
-        return (diff < thresholdMs);
+        return timeFrom(record) < thresholdMs;
     }
 
     /**
@@ -42,6 +50,16 @@ public abstract class EventSpamRecord {
     public long getTimestamp() {
         return timestamp;
     }
+    
+    /**
+     * Determine whether the spam record matches another record, using non-time-related criteria.
+     * This determines whether the records can be used for time comparison in the first place.
+     * Examples of matching criteria: event player causing the spam record, event location where the spam occurred, etc.
+     * @param record the spam record to compare
+     * @return whether the provided spam record matches
+     */
+    public abstract boolean matches(EventSpamRecord record);
+    
 
     /**
      * Constructs the event record about an event.

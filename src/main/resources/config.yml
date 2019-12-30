@@ -22,6 +22,10 @@ displayitem:
     spamdetectionbuffer: 5
     #sets within how many miliseconds a post in the history is considered spam
     spamthreshold: 2000
+    #sets whether a blocked spam-post resets the spam timer (each failed post makes the user wait longer) - prior to 2.4.2, the behavior of this was 'true'.
+    spamdetectionsresetcooldown: false
+    
+    
     #sets an upper limit on the amount of JSON characters for the item to have a hover component
     jsonlimit: 10000
     #sets the priority at which DisplayItem captures chat messages (lower=before other plugins)
@@ -30,7 +34,7 @@ displayitem:
     sendmodifiedchatevent: true
     messages:
         #message displayed to a user when the item-replacement is detected as spam.
-        cooldown: '&cPlease wait %cooldown% seconds before attempting to share your item again.'
+        cooldown: '&cPlease wait %cooldownremaining% seconds before sharing your item again.'
     integrations:
         placeholderapi: true
         

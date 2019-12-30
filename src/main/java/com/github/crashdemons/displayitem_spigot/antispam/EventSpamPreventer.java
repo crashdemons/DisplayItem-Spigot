@@ -6,6 +6,7 @@
 package com.github.crashdemons.displayitem_spigot.antispam;
 
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Defines an abstract spam preventer that defines methods common to all spam-preventers.
@@ -42,22 +43,34 @@ public abstract class EventSpamPreventer {
         next = (next+1)%recordCount;
     }
     
-    
     /**
-     * Checks an event against internal storage and returns a spam check result.
-     * 
-     * @param event the event to record and check.
-     * @return the SpamResult associated with spam checks done by this method.
+     * Retrieves the spam record that is most recent to the 
+     * @param record
+     * @return 
      */
-    public abstract SpamResult checkEvent(Event event);
+    @Nullable
+    protected synchronized EventSpamRecord getMostRecentRecord(EventSpamRecord record){
+        int i = Math.floorMod(next-1,recordCount);//start at the previously-assigned record
+        
+        long minTimeBetween=-1;
+        EventSpamRecord minRecord=null;
+        
+        for(int n=0; n<recordCount; n++){//only check each of the records once.
+            if(records[i].matches(record)){//the records are validly matched (using event criteria)
+                long timeBetween = records[i].timeFrom(record);
+                if(minRecord==null || timeBetween < minTimeBetween){
+                    minTimeBetween = timeBetween;
+                    minRecord = records[i];
+                }
+            }
+            i = Math.floorMod(i-1,recordCount);//move backwards along the array
+        }
+        return minRecord;
+    }
     
-    /**
-     * Records an event in internal storage and returns a spam check result.
-     * 
-     * Classes implementing this method should use addRecord to add internal records and methods of their implementation of EventSpamRecord to 
-     * @param event the event to record and check.
-     * @return the SpamResult associated with spam checks done by this method.
-     * @see #addRecord(com.github.crashdemons.playerheads.antispam.EventSpamRecord) 
-     */
-    public abstract SpamResult recordEvent(Event event);
+    protected SpamResult checkRecord(EventSpamRecord record, long thresholdMs){
+        EventSpamRecord matchedRecord = getMostRecentRecord(record);
+        if(matchedRecord==null) return new SpamResult(false,0);
+        return new SpamResult(matchedRecord.closeTo(record, thresholdMs), matchedRecord.timeFrom(record));
+    }
 }

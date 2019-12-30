@@ -43,6 +43,8 @@ public class MacroReplacements {
         "message",
         "cooldown",
         "cooldownms",
+        "cooldownremainder",
+        "cooldownremainderms",
         "amountE",
         "amountX",
         "Xamount",};
@@ -114,16 +116,18 @@ public class MacroReplacements {
         String message;
         String bookformat;
         boolean usebookname;
+        long cooldownremainder;
         boolean colorize;
         CachedDetails details;
 
-        public MacroParameters(OfflinePlayer offPlayer, String message, String bookformat, boolean usebookname, boolean colorize, CachedDetails details) {
+        public MacroParameters(OfflinePlayer offPlayer, String message, String bookformat, boolean usebookname, long cooldownremainder, boolean colorize, CachedDetails details) {
             this.offPlayer = offPlayer;
             this.message = message;
             this.bookformat = bookformat;
             this.usebookname = usebookname;
             this.colorize = colorize;
             this.details = details;
+            this.cooldownremainder=cooldownremainder;
         }
     }
     /*
@@ -177,7 +181,7 @@ public class MacroReplacements {
                 return meta.getLocalizedName();
             }
             if (usebookname && book != null) {
-                String bookname = replaceAllCached(details.offPlayer, bookformat, "", "", false, colorize, details);
+                String bookname = replaceAllCached(details.offPlayer, bookformat, "", "", false,  -1, colorize, details);
                 //DisplayItem.plugin.getLogger().info("...getItemName usebookname: bookname="+bookname+"|"+strDebug(bookname)+" len="+bookname.length()+" bookformat="+bookformat);//TXODO: debug line
                 if (!ChatColor.stripColor(bookname).isEmpty()) {
                     return bookname;
@@ -187,24 +191,24 @@ public class MacroReplacements {
         return getMaterialTypename(details.item.getType());
     }
 
-    public static String replaceAll(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, boolean colorize) {
+    public static String replaceAll(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, long cooldownremainder, boolean colorize) {
         CachedDetails details = new CachedDetails();
-        return replaceAllCached(player, replaceIn, messageValue, bookformat, usebookname, colorize, details);
+        return replaceAllCached(player, replaceIn, messageValue, bookformat, usebookname, cooldownremainder, colorize, details);
     }
 
-    public static String requestMacroUncached(OfflinePlayer offPlayer, String message, String macroName, String bookformat, boolean colorize, boolean usebookname) {
-        MacroParameters params = new MacroParameters(offPlayer, message, bookformat, usebookname, colorize, new CachedDetails());
+    public static String requestMacroUncached(OfflinePlayer offPlayer, String message, String macroName, String bookformat, boolean usebookname, long cooldownremainder, boolean colorize) {
+        MacroParameters params = new MacroParameters(offPlayer, message, bookformat, usebookname, cooldownremainder, colorize, new CachedDetails());
         return requestMacroCached(macroName, "", "", params);
     }
 
-    private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, boolean colorize, CachedDetails details) {
+    private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, long cooldownremainder, boolean colorize, CachedDetails details) {
 //        DisplayItem.plugin.getLogger().info("...replaceCached replace "+replaceIn+" message="+messageValue);//TXODO: debug line
         if (DisplayItem.plugin.placeholders.isActive()) {
 //            DisplayItem.plugin.getLogger().info("....applying placeholders "+replaceIn);//TXODO: debug line
             replaceIn = DisplayItem.plugin.placeholders.replaceAll(player, replaceIn);
         }
 
-        MacroParameters params = new MacroParameters(player, messageValue, bookformat, usebookname, colorize, new CachedDetails());
+        MacroParameters params = new MacroParameters(player, messageValue, bookformat, usebookname, cooldownremainder, colorize, new CachedDetails());
         for (String formatSuffix : formatSuffixes) {
             for (String paddingSuffix : paddingSuffixes) {
                 for (String macroName : supported) {
@@ -388,6 +392,13 @@ public class MacroReplacements {
                 return df.format(seconds);
             case "cooldownms":
                 return "" + DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
+            case "cooldownremainder":
+                if(params.cooldownremainder==-1) return "unknown";
+                double cseconds = params.cooldownremainder / 1000.0;
+                return df.format(cseconds);
+            case "cooldownremainderms":
+                if(params.cooldownremainder==-1) return "unknown";
+                return ""+params.cooldownremainder;
             default:
                 return null;
         }

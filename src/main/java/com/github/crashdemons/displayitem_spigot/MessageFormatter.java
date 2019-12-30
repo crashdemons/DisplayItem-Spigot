@@ -24,7 +24,7 @@ public class MessageFormatter{
         String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
         boolean usebookname = DisplayItem.plugin.getConfig().getBoolean("displayitem.usebooknameformat");
         String bookformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.booknameformat"));
-        String itemlabel = MacroReplacements.replaceAll(player, itemformat, "", bookformat, usebookname, colorize);
+        String itemlabel = MacroReplacements.replaceAll(player, itemformat, "", bookformat, usebookname, -1, colorize);
         
         
    
@@ -42,7 +42,7 @@ public class MessageFormatter{
             }catch(ItemJsonLengthException ex){
                 DisplayItem.plugin.getLogger().warning(ex.getMessage());
                 itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemtoolongformat"));
-                itemlabel = MacroReplacements.replaceAll(player, itemformat, "", bookformat, usebookname, colorize);
+                itemlabel = MacroReplacements.replaceAll(player, itemformat, "", bookformat, usebookname, -1, colorize);
                 itemComponent = TextComponent.fromLegacyText(itemlabel);
             }
 

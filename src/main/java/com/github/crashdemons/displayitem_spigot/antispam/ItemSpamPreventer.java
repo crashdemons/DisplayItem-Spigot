@@ -1,9 +1,7 @@
 package com.github.crashdemons.displayitem_spigot.antispam;
 
 import java.util.UUID;
-import org.bukkit.event.Event;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * Helper class that records and detects PlayerInteractEvent right-click spam
@@ -30,48 +28,22 @@ public class ItemSpamPreventer extends EventSpamPreventer {
         }
 
         boolean closeTo(ItemRecord record) {
-            if (record == null) {
-                return false;
-            }
-            if (record.playerId.equals(playerId)) {
-                if (super.closeTo(record, interactThresholdMs)) {
-                        return true;
-                }
-            }
+            return (record != null) && (super.closeTo(record, interactThresholdMs));
+        }
+        
+        @Override
+        public boolean matches(EventSpamRecord record){
+            if(record instanceof ItemRecord) return matchesItemRecord((ItemRecord) record);
             return false;
         }
-    }
-    
-    @Override
-    public SpamResult checkEvent(Event event){
-        if (event instanceof PlayerInteractEvent) {
-            return recordEvent((PlayerInteractEvent) event);
+        
+        public boolean matchesItemRecord(ItemRecord record){
+            return (record != null) && (record.playerId.equals(playerId));
         }
-        return new SpamResult(false);
-    }
-    
+        
 
-    @Override
-    public SpamResult recordEvent(Event event) {
-        if (event instanceof PlayerInteractEvent) {
-            return recordEvent((PlayerInteractEvent) event);
-        }
-        return new SpamResult(false);
     }
     
-    
-    //Check a new record for spam against recorded ones - NOTE: this is not synchronized or thread-safe on its own!
-    private SpamResult checkRecord(ItemRecord record){
-        SpamResult result = new SpamResult(false);
-        for (EventSpamRecord otherRecordObj : records) {
-            ItemRecord otherRecord = (ItemRecord) otherRecordObj;
-            if (record.closeTo(otherRecord)) {
-                result.toggle();
-                break;
-            }
-        }
-        return result;
-    }
     
     /**
      * Checks an interaction event internally and prepares a result after
@@ -83,7 +55,7 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      */
     public SpamResult checkEvent(AsyncPlayerChatEvent event){//TODO: need combined synchronization with recordEvent
         synchronized(records){
-            return checkRecord(new ItemRecord(event));
+            return checkRecord(new ItemRecord(event), interactThresholdMs);
         }
     }
     
@@ -97,10 +69,29 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
      */
     public SpamResult recordEvent(AsyncPlayerChatEvent event) {
+        return recordEvent(event, false, false);
+    }
+    
+
+    /**
+     * Analyzes an interaction event internally and prepares a spam detection result.
+     * Records the event depending on the state of spam result, if enabled.
+     *
+     * @param event The PlayerInteractEvent to send to the spam-preventer.
+     * @param recordConditionally Whether recording the event is conditional on the state of the result.
+     * @param recordResultState The state of the spam-detection result that needs to be recorded.
+     * @return The Spam-detection Result object
+     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
+     */
+    public SpamResult recordEvent(AsyncPlayerChatEvent event, boolean recordConditionally, boolean recordResultState) {
         synchronized(records){
             ItemRecord record = new ItemRecord(event);
-            SpamResult result = checkRecord(record);
-            addRecord(record);
+            SpamResult result = checkRecord(record, interactThresholdMs);
+            if(recordConditionally){
+                if(result.isSpam() == recordResultState) addRecord(record);
+            }else{
+                addRecord(record);
+            }
             return result;
         }
     }
