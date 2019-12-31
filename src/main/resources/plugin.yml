@@ -5,7 +5,7 @@ author: crashdemons
 api-version: 1.13
 main: com.github.crashdemons.displayitem_spigot.DisplayItem
 #softdepend: [DiscordSRV]
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, Factions]
 
 commands:
     displayitem:
