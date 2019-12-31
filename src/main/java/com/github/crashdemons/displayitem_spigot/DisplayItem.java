@@ -44,13 +44,19 @@ public class DisplayItem extends JavaPlugin{
     public void onDisable(){
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!cmd.getName().equalsIgnoreCase("displayitem")) return true;//not the command we expected!
+    
+    private boolean onCommandReload(CommandSender sender, Command cmd, String label, String[] args){
         if(args.length!=0) return false;
         if (sender.hasPermission("displayitem.reload")) reload(true, sender);
         else sender.sendMessage(ChatColor.RED+"You don't have permission to do that.");
         
+        return true;
+    }
+    
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("displayitem")) return onCommandReload(sender, cmd, label, args);
+
         return true;
     }
 
