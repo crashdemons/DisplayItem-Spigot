@@ -6,8 +6,10 @@ api-version: 1.13
 main: com.github.crashdemons.displayitem_spigot.DisplayItem
 
 #plugins we use for features AND plugins we want to format chat *FIRST* at the same priority level as DI.
+#these plugins are loaded before DI but are not required.
 softdepend: [PlaceholderAPI, Factions]
 
+#commands suupported by DisplayItem.
 commands:
     displayitem:
         usage: /displayitem
@@ -15,7 +17,9 @@ commands:
         permission: displayitem.reload
         permission-message: You don't have permission for this command
         aliases: [direload]
-      
+
+#permissions supported by DisplayItem.
+#you should apply or negate/deny these with your permissions plugin (like LuckPerms/PEX) or your server's Permissions.yml.
 permissions:
     displayitem.*:
         description: gives all permissions for DisplayItem
