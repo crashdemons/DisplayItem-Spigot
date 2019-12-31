@@ -38,10 +38,12 @@ public class DisplayItem extends JavaPlugin{
         listener = new ChatListener();
         reload(false, null);
         placeholders.activate(getConfig().getBoolean("displayitem.integrations.placeholderapi"));
+        getLogger().info("enabled");
     }
     
     @Override
     public void onDisable(){
+        getLogger().info("disabled");
     }
 
     
@@ -52,10 +54,14 @@ public class DisplayItem extends JavaPlugin{
         
         return true;
     }
+    private boolean onCommandCalibrate(CommandSender sender, Command cmd, String label, String[] args){
+        return true;
+    }
     
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("displayitem")) return onCommandReload(sender, cmd, label, args);
+        if (cmd.getName().equalsIgnoreCase("displayitemcalibrate")) return onCommandCalibrate(sender, cmd, label, args);
 
         return true;
     }
