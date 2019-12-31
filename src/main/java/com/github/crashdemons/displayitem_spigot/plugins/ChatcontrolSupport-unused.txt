@@ -1,0 +1,22 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.github.crashdemons.displayitem_spigot.plugins;
+
+import com.github.crashdemons.displayitem_spigot.plugins.CompatiblePlugin;
+import org.bukkit.plugin.Plugin;
+
+/**
+ *
+ * @author crashdemons (crashenator at gmail.com)
+ */
+public class ChatcontrolSupport extends CompatiblePlugin {
+    public ChatcontrolSupport(Plugin parentPlugin){
+        super(parentPlugin,"ChatControl");
+    }
+    
+    onPrivateMessage()
+
+}
