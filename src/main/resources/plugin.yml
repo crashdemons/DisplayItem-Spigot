@@ -4,7 +4,8 @@ description: DisplayItem
 author: crashdemons
 api-version: 1.13
 main: com.github.crashdemons.displayitem_spigot.DisplayItem
-#softdepend: [DiscordSRV]
+
+#plugins we use for features AND plugins we want to format chat *FIRST* at the same priority level as DI.
 softdepend: [PlaceholderAPI, Factions]
 
 commands:
