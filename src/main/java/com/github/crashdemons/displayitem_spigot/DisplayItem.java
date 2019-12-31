@@ -1,13 +1,16 @@
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.calibrator.Calibrator;
 import com.github.crashdemons.displayitem_spigot.plugins.placeholderapi.PlaceholderSupport;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DisplayItem extends JavaPlugin{
 
+    public Calibrator calibrator;
     public static DisplayItem plugin=null;
     private ChatListener listener=null;
     public final PlaceholderSupport placeholders;
@@ -15,12 +18,17 @@ public class DisplayItem extends JavaPlugin{
     
     public DisplayItem(){
         placeholders =  new PlaceholderSupport(this);
+        calibrator = new Calibrator(this);
         //discordSrv = new DiscordSrvCompatibility(this);
+    }
+    
+    public void reloadListener(){
+        if(listener!=null) listener.reload();
     }
 
     public void reload(boolean message, CommandSender sender) {
         reloadConfig();
-        if(listener!=null) listener.reload();
+        reloadListener();
         if (message) {
             if (sender == null) {
                 getLogger().info("reloaded");
@@ -50,11 +58,30 @@ public class DisplayItem extends JavaPlugin{
     private boolean onCommandReload(CommandSender sender, Command cmd, String label, String[] args){
         if(args.length!=0) return false;
         if (sender.hasPermission("displayitem.reload")) reload(true, sender);
-        else sender.sendMessage(ChatColor.RED+"You don't have permission to do that.");
+        else  sender.sendMessage(ChatColor.RED+"You don't have permission to do that."); 
         
         return true;
     }
-    private boolean onCommandCalibrate(CommandSender sender, Command cmd, String label, String[] args){
+    
+    
+    
+    
+    private boolean onCommandCalibrate(CommandSender sender, Command cmd, String label, String[] args){//TODO: Sync
+        if(args.length>1) return false;
+        if (!sender.hasPermission("displayitem.calibrate")){ sender.sendMessage(ChatColor.RED+"You don't have permission to do that."); return true; }
+        
+        if(!(sender instanceof Player)){ sender.sendMessage(ChatColor.RED+"This command must be ran as a player."); return true; }
+        
+        String argument = "";
+        if(args.length!=0) argument = args[0];
+        calibrator.calibrate((Player) sender, argument);
+        
+        
+        //determine support for ???
+        //sendmodifiedchatevent
+        
+        
+        
         return true;
     }
     
