@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Repairable;
 
 /**
  *
@@ -50,7 +51,14 @@ public class MacroReplacements {
         "cooldownremainderms",
         "amountE",
         "amountX",
-        "Xamount",};
+        "Xamount",
+        
+        "repaircost",
+        "repaircostE",
+        "Rrepaircost",
+    
+    
+    };
     private static final String[] paddingSuffixes = new String[]{
         "",
         "PL",
@@ -111,6 +119,15 @@ public class MacroReplacements {
             }
             return book;
         }
+    }
+    
+    
+    private static int getRepairCost(ItemMeta meta){
+        if(meta==null){ return -1; }
+        if(!(meta instanceof Repairable)) { return -1; }
+        Repairable rep = (Repairable) meta;
+        if(!rep.hasRepairCost()) { return 0; }
+        return rep.getRepairCost();
     }
 
     private static class MacroParameters {
@@ -409,6 +426,21 @@ public class MacroReplacements {
             case "cooldownremainderms":
                 if(params.cooldownremainder==-1) return "unknown";
                 return ""+params.cooldownremainder;
+            case "repaircost":
+                if(meta==null) return "0";
+                int rc = getRepairCost(meta);
+                if(rc<0) return "0";
+                return ""+rc;
+            case "repaircostE":
+                if(meta==null) return "";
+                int rce = getRepairCost(meta);
+                if(rce<0) return "";
+                return ""+rce;
+            case "Rrepaircost":
+                if(meta==null) return "";
+                int rcr = getRepairCost(meta);
+                if(rcr<0) return "";
+                return "RC:"+rcr;
             default:
                 return null;
         }
