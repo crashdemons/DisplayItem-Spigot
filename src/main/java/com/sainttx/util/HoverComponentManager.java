@@ -29,30 +29,15 @@ public class HoverComponentManager {
     * @throws ItemJsonLengthException if the limit is exceeded
     */
     public static void sendItemTooltipMessage(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
-        String itemJson = ItemConverter.convertItemStackToJson(item);
-        
-        if(itemJson.length()>jsonLengthLimit){
-            throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
-        }
-        
-
-        // Prepare a BaseComponent array with the itemJson as a text component
-        BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                new TextComponent(itemJson) // The only element of the hover events basecomponents is the item json
-        };
-
-        // Create the hover event
-        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
-
-        /* And now we create the text component (this is the actual text that the player sees)
-         * and set it's hover event to the item event */
-        TextComponent component = new TextComponent(message);
-        component.setHoverEvent(event);
-
-        // Finally, send the message to the player
-        player.spigot().sendMessage(component);
+        // send the message to the player
+        player.spigot().sendMessage(getTooltipComponent(message,item,jsonLengthLimit));
     }
-    public static TextComponent getTooltipComponent(String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
+    public static BaseComponent getTooltipComponent(String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
+        /* And now we create the text component (this is the actual text that the player sees)
+         * and set it's hover event to the item event */
+        return getTooltipComponent(new TextComponent(message),item,jsonLengthLimit);
+    }
+    public static BaseComponent getTooltipComponent(BaseComponent component, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         String itemJson = ItemConverter.convertItemStackToJson(item);
         if(itemJson.length()>jsonLengthLimit){
             throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
@@ -66,9 +51,7 @@ public class HoverComponentManager {
         // Create the hover event
         HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
 
-        /* And now we create the text component (this is the actual text that the player sees)
-         * and set it's hover event to the item event */
-        TextComponent component = new TextComponent(message);
+        /* set the hover event to the item event for the text-component that the player will see*/
         component.setHoverEvent(event);
         return component;
     }
