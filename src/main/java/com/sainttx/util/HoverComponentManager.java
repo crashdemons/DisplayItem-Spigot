@@ -5,7 +5,6 @@
  */
 package com.sainttx.util;
 
-import static com.sainttx.util.ItemConverter.convertItemStackToJson;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,7 +29,7 @@ public class HoverComponentManager {
     * @throws ItemJsonLengthException if the limit is exceeded
     */
     public static void sendItemTooltipMessage(Player player, String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
-        String itemJson = convertItemStackToJson(item);
+        String itemJson = ItemConverter.convertItemStackToJson(item);
         
         if(itemJson.length()>jsonLengthLimit){
             throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
@@ -54,7 +53,7 @@ public class HoverComponentManager {
         player.spigot().sendMessage(component);
     }
     public static TextComponent getTooltipComponent(String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
-        String itemJson = convertItemStackToJson(item);
+        String itemJson = ItemConverter.convertItemStackToJson(item);
         if(itemJson.length()>jsonLengthLimit){
             throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
         }
