@@ -38,7 +38,6 @@ public class MessageFormatter{
         if (canDisplayItem) {
             int jsonLimit =  DisplayItem.plugin.getConfig().getInt("displayitem.jsonlimit");
             try{
-                System.out.println("DI-MessageFormatter candisplay label: "+itemlabel);//TODO: DEBUG
                 itemComponent = HoverComponentManager.getTooltipComponent(itemlabel, item, jsonLimit);
             }catch(ItemJsonLengthException ex){
                 DisplayItem.plugin.getLogger().warning(ex.getMessage());

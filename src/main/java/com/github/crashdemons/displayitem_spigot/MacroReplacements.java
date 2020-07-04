@@ -195,21 +195,16 @@ public class MacroReplacements {
     private static String getItemName(CachedDetails details, String bookformat, boolean usebookname, boolean colorize) {
         ItemMeta meta = details.meta;
         BookMeta book = details.book;
-        System.out.println("DI-Macro-getItemName ");
         if (meta != null) {
-            System.out.println("DI-Macro-getItemName meta");
             if (meta.hasDisplayName()) {
                 
-                
-                System.out.println("DI-Macro-getItemName meta displayname "+meta.getDisplayName());//TODO: debug
-                BaseComponent[] components = TextComponent.fromLegacyText(meta.getDisplayName());
-                String reformatted = TextUtils.toLegacyText(components, true);
-                System.out.println("DI-Macro-getItemName meta reformatted "+reformatted);
+
+                //BaseComponent[] components = TextComponent.fromLegacyText(meta.getDisplayName());
+                //String reformatted = TextUtils.toLegacyText(components, true);
                 
                 return meta.getDisplayName();
             }
             if (meta.hasLocalizedName()) {
-                System.out.println("DI-Macro-getItemName meta localizedname "+meta.getLocalizedName());
                 return meta.getLocalizedName();
             }
             if (usebookname && book != null) {

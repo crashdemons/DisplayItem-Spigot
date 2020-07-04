@@ -35,7 +35,6 @@ public class HoverComponentManager {
     public static BaseComponent[] getTooltipComponent(String message, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         /* And now we create the text component (this is the actual text that the player sees)
          * and set it's hover event to the item event */
-        System.out.println("DI-HoverManager message-string "+message);//TODO: DEBUG
         
         BaseComponent messageContainer = new TextComponent();
         
@@ -48,10 +47,6 @@ public class HoverComponentManager {
         return getTooltipComponent(messageContainer,item,jsonLengthLimit);
     }
     public static BaseComponent[] getTooltipComponent(BaseComponent messageComponent, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
-        
-        /*System.out.println("DI-HoverManager message-component "+messageComponents.toString());//TODO: DEBUG
-        System.out.println("DI-HoverManager message-component-legacy "+messageComponents.toLegacyText());//TODO: DEBUG
-        System.out.println("DI-HoverManager message-component-plain "+messageComponents.toPlainText());//TODO: DEBUG*/
         
         String itemJson = ItemConverter.convertItemStackToJson(item);
         if(itemJson.length()>jsonLengthLimit){
