@@ -27,7 +27,7 @@ displayitem:
     
     
     #sets an upper limit on the amount of JSON characters for the item to have a hover component
-    jsonlimit: 10000
+    jsonlimit: 8000
     #sets the priority at which DisplayItem captures chat messages (lower=before other plugins)
     listenerpriority: NORMAL
     #whether or not to send a ReplacedChatEvent out of courtesy to other plugins

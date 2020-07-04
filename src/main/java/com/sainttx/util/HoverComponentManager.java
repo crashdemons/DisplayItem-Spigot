@@ -36,10 +36,18 @@ public class HoverComponentManager {
         /* And now we create the text component (this is the actual text that the player sees)
          * and set it's hover event to the item event */
         System.out.println("DI-HoverManager message-string "+message);//TODO: DEBUG
+        
+        BaseComponent messageContainer = new TextComponent();
+        
         BaseComponent[] messageComponents = TextComponent.fromLegacyText(message);
-        return getTooltipComponent(messageComponents,item,jsonLengthLimit);
+        
+        for(BaseComponent messageComponent : messageComponents){
+            messageContainer.addExtra(messageComponent);
+        }
+        
+        return getTooltipComponent(messageContainer,item,jsonLengthLimit);
     }
-    public static BaseComponent[] getTooltipComponent(BaseComponent[] messageComponents, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
+    public static BaseComponent[] getTooltipComponent(BaseComponent messageComponent, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         
         /*System.out.println("DI-HoverManager message-component "+messageComponents.toString());//TODO: DEBUG
         System.out.println("DI-HoverManager message-component-legacy "+messageComponents.toLegacyText());//TODO: DEBUG
@@ -59,10 +67,10 @@ public class HoverComponentManager {
         HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
 
         /* set the hover event to the item event for the text-component that the player will see*/
-        for(BaseComponent messageComponent : messageComponents){
+        //for(BaseComponent messageComponent : messageComponents){
             messageComponent.setHoverEvent(event);
-        }
+        //}
         
-        return messageComponents;
+        return new BaseComponent[]{messageComponent};
     }
 }
