@@ -76,7 +76,7 @@ public class DisplayItem extends JavaPlugin{
     
     private boolean onCommandShare(CommandSender sender, Command cmd, String label, String[] args){
         if(args.length>1) return false;
-        if (sender.hasPermission("displayitem.share")){ 
+        if (!sender.hasPermission("displayitem.share")){ 
             sender.sendMessage(ChatColor.RED+"You don't have permission to use this command.");
             return true;
         }
@@ -107,7 +107,7 @@ public class DisplayItem extends JavaPlugin{
             String targetUser = args[0];
             Player target = Bukkit.getPlayer(targetUser);
             if (target==null){ 
-                sender.sendMessage(ChatColor.RED+"Can't find a user with the name '"+target+"' online.");
+                sender.sendMessage(ChatColor.RED+"Can't find the user '"+targetUser+"' online.");
                 return true;
             }
             shareItem(player,target);//share with user
@@ -160,6 +160,7 @@ public class DisplayItem extends JavaPlugin{
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("displayitem")) return onCommandReload(sender, cmd, label, args);
         if (cmd.getName().equalsIgnoreCase("displayitemcalibrate")) return onCommandCalibrate(sender, cmd, label, args);
+        if (cmd.getName().equalsIgnoreCase("displayitemshare")) return onCommandShare(sender, cmd, label, args);
 
         return true;
     }

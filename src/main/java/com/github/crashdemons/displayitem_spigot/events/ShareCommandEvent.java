@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -25,11 +26,17 @@ public class ShareCommandEvent implements ChatEvent {
     String message;
     boolean cancelled;
     
-    public ShareCommandEvent(Player sender, Set<Player> recipients){
-        String format = DisplayItem.plugin.getConfig().getString("shareformatbukkit");
-        String message = DisplayItem.plugin.getConfig().getString("shareformatmessage");
+    private static String getFormat(String name){
+        return DisplayItem.plugin.getConfig().getString("displayitem.shareformat"+name);
+    }
+    
+    
+    public ShareCommandEvent(Player sender, Set<Player> recipients, String format, String message){
+        //String format = DisplayItem.plugin.getConfig().getString("displayitem.shareformatbukkit");
+        //String message = DisplayItem.plugin.getConfig().getString("displayitem.shareformatmessage");
         format = MacroReplacements.replaceAll(player, format, "%2$s", "", false, -1, false);
         message = MacroReplacements.replaceAll(player, message, "", "", false, -1, false);
+        message = ChatColor.translateAlternateColorCodes('&', message);
         
         
         this.player=sender;
@@ -39,11 +46,11 @@ public class ShareCommandEvent implements ChatEvent {
     }
     
     public ShareCommandEvent(Player sender, Player recipient){
-        this(sender,new HashSet<>(Collections.singleton(recipient)));
+        this(sender,new HashSet<>(Collections.singleton(recipient)),getFormat("bukkitprivate"),getFormat("messageprivate"));
     }
     
     public ShareCommandEvent(Player sender){
-        this(sender,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())));
+        this(sender,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())),getFormat("bukkit"),getFormat("message"));
     }
     
     public Player getPlayer(){

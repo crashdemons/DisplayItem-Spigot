@@ -27,6 +27,21 @@ displayitem:
     #how a users message sharing an item with /shareitem should appear
     #note that %replacement% should appear somewhere in the message if you want the item to appear at all.
     shareformatmessage: 'shared an item: %replacement%'
+    
+    
+
+    #how the message shared in chat should appear using bukkit format
+    #this is a String.format() compatible string where the username is %1$s and the message is %2$s
+    #note that 'overridechatformat' does not affect the share command format, so you must make changes here.
+    #note that 'displayitem.replace' permission does not apply to share command uses, it has its own permission.
+    #but displayitem.colorname permission does apply to share command appearance.
+    shareformatbukkitprivate: "&7&o*%1$s&r &7&o%2$s"
+    #how a users message sharing an item with /shareitem should appear
+    #note that %replacement% should appear somewhere in the message if you want the item to appear at all.
+    shareformatmessageprivate: 'shared an item with you: %replacement%'
+    
+    
+    
 
     #how many item-display records history to keep for detecting spam
     spamdetectionbuffer: 5
