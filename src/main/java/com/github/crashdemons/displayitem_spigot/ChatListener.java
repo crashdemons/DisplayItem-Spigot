@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.jetbrains.annotations.Nullable;
 
 /**
  *
@@ -18,23 +19,31 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class ChatListener implements Listener {
 
     EventPriority listenerpriority;
+    ChatEventExecutor executor = null;
     
     public ChatListener(){
     }
     
     public void registerEvents(){
-        Bukkit.getServer().getPluginManager().registerEvent(AsyncPlayerChatEvent.class, this, listenerpriority, new ChatEventExecutor(this,listenerpriority), DisplayItem.plugin, true);
+        executor = new ChatEventExecutor(this,listenerpriority);
+        Bukkit.getServer().getPluginManager().registerEvent(AsyncPlayerChatEvent.class, this, listenerpriority, executor, DisplayItem.plugin, true);
         DisplayItem.plugin.getLogger().info("Registered listener");
     }
     
     public void unregisterEvents(){
         HandlerList.unregisterAll(this);
+        executor=null;
         DisplayItem.plugin.getLogger().info("Unregistered listener");
     }
     
     public void reloadEvents(){
         unregisterEvents();
         registerEvents();
+    }
+    
+    @Nullable
+    public ChatEventExecutor getExecutor(){
+        return executor;
     }
     
     private void reloadPriority(){
