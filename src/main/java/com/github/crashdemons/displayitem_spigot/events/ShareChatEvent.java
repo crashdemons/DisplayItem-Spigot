@@ -21,6 +21,7 @@ public class ShareChatEvent implements ChatEvent {
     Player player;
     String format;
     String message;
+    boolean cancelled;
     
     public ShareChatEvent(Player sender, String format, String message, Set<Player> recipients){
         this.player=sender;
@@ -37,7 +38,32 @@ public class ShareChatEvent implements ChatEvent {
         this(sender,format,message,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())));
     }
     
-    public boolean isAsynchronous(){
+    public Player getPlayer(){
+        return player;
+    }
+    public String getFormat(){
+        return format;
+    }
+    public String getMessage(){
+        return message;
+    }
+    public Set<Player> getRecipients(){
+        return recipients;
+    }
+    public boolean isCancelled(){
+        return cancelled;
+    }
+    public void setCancelled​(boolean cancel){
+        cancelled=cancel;
+    }
+    public void setFormat​(String format){
+        this.format=format;
+    }
+    public void setMessage​(String message){
+        this.message=message;
+    }
+    public boolean isAsynchronous(){//TODO: verify? allow configuring it?
         return false;
     }
+    
 }
