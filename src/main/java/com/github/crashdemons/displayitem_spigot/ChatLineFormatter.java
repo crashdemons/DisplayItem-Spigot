@@ -28,9 +28,8 @@ public class ChatLineFormatter extends MessageFormatter{
         return name;
     }
     
-    private String getChatLineFormat(String bukkitChatFormat){
+    private static String getChatLineFormat(String bukkitChatFormat, boolean overrideChatLineFormat){
         String chatLineFormat;
-        boolean overrideChatLineFormat = DisplayItem.plugin.getConfig().getBoolean("displayitem.overridechatformat");
         if(overrideChatLineFormat){
             chatLineFormat = DisplayItem.plugin.getConfig().getString("displayitem.format");
         }else{
@@ -39,15 +38,15 @@ public class ChatLineFormatter extends MessageFormatter{
         return chatLineFormat;
     }
     
-    private String formatChatLine(Player player, String chatLineFormat, String message){
+    private static String formatChatLine(Player player, String chatLineFormat, String message){
         return MacroReplacements.replaceAll(player, chatLineFormat, message, "", false, -1, false);
     }
     
     
-    public SplitChatMessage chatLineInsertItem(Player player, String bukkitChatFormat, String bukkitMessageText, boolean colorize) {
+    public static SplitChatMessage chatLineInsertItem(Player player, String bukkitChatFormat, String bukkitMessageText, boolean colorize, boolean overridechatformat) {
         BaseComponent[] messageInserted = messageInsertItem(player, bukkitMessageText, colorize).toComponents();
         
-        String chatLineFormat = ChatColor.translateAlternateColorCodes('&',getChatLineFormat(bukkitChatFormat));
+        String chatLineFormat = ChatColor.translateAlternateColorCodes('&',getChatLineFormat(bukkitChatFormat,overridechatformat));
         
         String displayname = getPlayerName(player);
         //use a temporary placeholder so that we can tell if the chat format added text before and/or after the message, not just after!
