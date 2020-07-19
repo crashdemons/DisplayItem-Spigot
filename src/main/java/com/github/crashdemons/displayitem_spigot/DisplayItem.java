@@ -111,6 +111,7 @@ public class DisplayItem extends JavaPlugin{
                 return true;
             }
             shareItem(player,target);//share with user
+            sender.sendMessage(ChatColor.GRAY+""+ChatColor.ITALIC+"*You shared your item with "+ChatColor.WHITE+targetUser+ChatColor.GRAY+".");
         }
         if(willPublish){
             if(!canPublish){
