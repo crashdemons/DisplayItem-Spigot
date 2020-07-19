@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class ChatLineFormatter extends MessageFormatter{
+    
+    //TODO: static?
 
     private static final String MESSAGE_REPLACEMENT_PLACEHOLDER = "[[DI-MESG-MARKER]]";
 

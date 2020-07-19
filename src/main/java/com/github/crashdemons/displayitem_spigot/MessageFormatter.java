@@ -20,6 +20,8 @@ import org.bukkit.inventory.ItemStack;
  */
 public class MessageFormatter{
 
+    //todo: static?
+    
     private BaseComponent[] formatItemComponents(Player player, ItemStack item, boolean colorize){
         String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
         boolean usebookname = DisplayItem.plugin.getConfig().getBoolean("displayitem.usebooknameformat");
