@@ -23,6 +23,12 @@ commands:
         permission: displayitem.calibrate
         permission-message: You don't have permission for this command
         aliases: [dicalibrate,diset]
+    displayitemshare:
+        usage: /displayitemshare [user]
+        description: Shares an item
+        permission: displayitem.share
+        permission-message: You don't have permission for this command
+        aliases: [dishareitem,shareitem]
 
 #permissions supported by DisplayItem.
 #you should apply or negate/deny these with your permissions plugin (like LuckPerms/PEX) or your server's Permissions.yml.
@@ -51,6 +57,20 @@ permissions:
     displayitem.colorname:
         description: Controls whether the name of the item is colorized for this user's chat. Requires 'replace' permission
         default: true
+        
+    displayitem.share:
+        description: Controls access to the shareitem command
+        default: false 
+        
+    displayitem.share.all:
+        description: Controls access to the shareitem command sent to all users
+        default: false 
+        
+    displayitem.share.other:
+        description: Controls access to the shareitem command sent to other users
+        default: false 
+        
+        
         
     displayitem.bypasscooldown:
         description: Bypass the spam detection cooldown

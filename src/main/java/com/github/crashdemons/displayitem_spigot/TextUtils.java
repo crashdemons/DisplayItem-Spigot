@@ -16,7 +16,7 @@ public class TextUtils {
     private TextUtils(){}
     public static String toLegacyText(BaseComponent[] components, boolean format){
         String legacyMessage = "";
-        for(BaseComponent component : components){
+        for(BaseComponent component : components){ //TODO; consider putting in a nested BaseComponent for conversion.
             legacyMessage+=component.toLegacyText();
         }
         if(!format) return ChatColor.stripColor(legacyMessage);

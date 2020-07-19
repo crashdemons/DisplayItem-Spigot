@@ -20,7 +20,9 @@ import org.bukkit.inventory.ItemStack;
  */
 public class MessageFormatter{
 
-    private BaseComponent[] formatItemComponents(Player player, ItemStack item, boolean colorize){
+    //todo: static?
+    
+    private static BaseComponent[] formatItemComponents(Player player, ItemStack item, boolean colorize){
         String itemformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.itemformat"));
         boolean usebookname = DisplayItem.plugin.getConfig().getBoolean("displayitem.usebooknameformat");
         String bookformat = ChatColor.translateAlternateColorCodes('&', DisplayItem.plugin.getConfig().getString("displayitem.booknameformat"));
@@ -52,7 +54,7 @@ public class MessageFormatter{
         return itemComponent;
     }
     
-    public SplitChatMessage messageInsertItem(Player player, String messageText, boolean colorize){
+    public static SplitChatMessage messageInsertItem(Player player, String messageText, boolean colorize){
         String metareplacestr = DisplayItem.plugin.getConfig().getString("displayitem.metareplacement");
         String replacestr = DisplayItem.plugin.getConfig().getString("displayitem.replacement");
         SplitChatMessage bukkitTextSplit = SplitChatMessage.fromWithExternalReplacement(messageText, replacestr,   metareplacestr,replacestr);
