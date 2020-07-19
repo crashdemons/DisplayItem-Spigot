@@ -56,7 +56,9 @@ public class MacroReplacements {
         "repaircost",
         "repaircostE",
         "Rrepaircost",
-    
+        
+        "replacement",
+        "metareplacement",
     
     };
     private static final String[] paddingSuffixes = new String[]{
@@ -446,6 +448,10 @@ public class MacroReplacements {
                 int rcr = getRepairCost(meta);
                 if(rcr<0) return "";
                 return "RC:"+rcr;
+            case "replacement":
+                return DisplayItem.plugin.getConfig().getString("displayitem.replacement");
+            case "metareplacement":
+                return DisplayItem.plugin.getConfig().getString("displayitem.metareplacement");
             default:
                 return null;
         }

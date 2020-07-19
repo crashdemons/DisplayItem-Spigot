@@ -10,6 +10,7 @@ import com.github.crashdemons.displayitem_spigot.antispam.SpamResult;
 import com.github.crashdemons.displayitem_spigot.events.ChatEvent;
 import com.github.crashdemons.displayitem_spigot.events.AsyncPlayerChatEventAdapter;
 import com.github.crashdemons.displayitem_spigot.events.ReplacedChatEvent;
+import com.github.crashdemons.displayitem_spigot.events.ShareCommandEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -71,9 +72,10 @@ public class ChatEventExecutor implements EventExecutor {
         return false;
     }
     
-    private void replaceItem(Player player, String format, String message){
+    private SplitChatMessage replaceItem(Player player, String format, String message, boolean isShareCommand){
         boolean color = player.hasPermission("displayitem.colorname");
-        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(player, format, message, color);
+        boolean overridechatformat = !isShareCommand && DisplayItem.plugin.getConfig().getBoolean("displayitem.overridechatformat");
+        return itemreplacer.chatLineInsertItem(player, format, message, color, overridechatformat);
     }
     
     public void onChat(@NotNull AsyncPlayerChatEvent event){
@@ -82,6 +84,8 @@ public class ChatEventExecutor implements EventExecutor {
     
     public void onChat(@NotNull ChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
+        boolean isShareCommand = event instanceof ShareCommandEvent;
+        
         Player player = event.getPlayer();
         String format = event.getFormat();
         String message = event.getMessage();
@@ -91,20 +95,16 @@ public class ChatEventExecutor implements EventExecutor {
         
         
         boolean itemNeedsReplacing = message.contains(replacestr);
-        if(!player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
+        if(!isShareCommand && !player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
         
         
         if(itemNeedsReplacing && checkSpam(player,message)) itemNeedsReplacing=false;
-        
-
 
         if(itemNeedsReplacing){
             event.setCancelled(true);
+            
 
-            boolean color = player.hasPermission("displayitem.colorname");
-
-
-            SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(player, format, message, color);
+            SplitChatMessage chatLineSplit = replaceItem(player, format, message,isShareCommand);
 
 
             ReplacedChatEvent replacementEvent = new ReplacedChatEvent(event);

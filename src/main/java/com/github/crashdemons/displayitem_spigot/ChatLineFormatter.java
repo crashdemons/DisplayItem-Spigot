@@ -38,7 +38,7 @@ public class ChatLineFormatter extends MessageFormatter{
         return chatLineFormat;
     }
     
-    private static String formatChatLine(Player player, String chatLineFormat, String message){
+    public static String formatChatLine(Player player, String chatLineFormat, String message){
         return MacroReplacements.replaceAll(player, chatLineFormat, message, "", false, -1, false);
     }
     

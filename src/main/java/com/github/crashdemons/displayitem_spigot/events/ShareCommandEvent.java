@@ -5,6 +5,8 @@
  */
 package com.github.crashdemons.displayitem_spigot.events;
 
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
+import com.github.crashdemons.displayitem_spigot.MacroReplacements;
 import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,26 +18,32 @@ import org.bukkit.entity.Player;
  *
  * @author crashdemons (crashenator at gmail.com)
  */
-public class ShareChatEvent implements ChatEvent {
+public class ShareCommandEvent implements ChatEvent {
     Set<Player> recipients;
     Player player;
     String format;
     String message;
     boolean cancelled;
     
-    public ShareChatEvent(Player sender, String format, String message, Set<Player> recipients){
+    public ShareCommandEvent(Player sender, Set<Player> recipients){
+        String format = DisplayItem.plugin.getConfig().getString("shareformatbukkit");
+        String message = DisplayItem.plugin.getConfig().getString("shareformatmessage");
+        format = MacroReplacements.replaceAll(player, format, "%2$s", "", false, -1, false);
+        message = MacroReplacements.replaceAll(player, message, "", "", false, -1, false);
+        
+        
         this.player=sender;
         this.format=format;
         this.message=message;
         this.recipients=recipients;
     }
     
-    public ShareChatEvent(Player sender, String format, String message, Player recipient){
-        this(sender,format,message,new HashSet<>(Collections.singleton(recipient)));
+    public ShareCommandEvent(Player sender, Player recipient){
+        this(sender,new HashSet<>(Collections.singleton(recipient)));
     }
     
-    public ShareChatEvent(Player sender, String format, String message){
-        this(sender,format,message,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())));
+    public ShareCommandEvent(Player sender){
+        this(sender,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())));
     }
     
     public Player getPlayer(){

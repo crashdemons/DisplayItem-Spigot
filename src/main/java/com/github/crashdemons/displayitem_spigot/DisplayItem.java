@@ -1,12 +1,16 @@
 package com.github.crashdemons.displayitem_spigot;
 
 import com.github.crashdemons.displayitem_spigot.calibrator.Calibrator;
+import com.github.crashdemons.displayitem_spigot.events.ShareCommandEvent;
 import com.github.crashdemons.displayitem_spigot.plugins.placeholderapi.PlaceholderSupport;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 public class DisplayItem extends JavaPlugin{
 
@@ -54,12 +58,36 @@ public class DisplayItem extends JavaPlugin{
         getLogger().info("disabled");
     }
 
+    private void syncOperation(Runnable task, long tickDelay){
+        getServer().getScheduler().scheduleSyncDelayedTask(this, task, tickDelay);
+    }
+    
+    private void shareItem(Player sender, Player target){
+        ShareCommandEvent event;
+        if(target==null){
+            event = new ShareCommandEvent(sender);
+        }else{
+            event = new ShareCommandEvent(sender,target);
+        }
+        syncOperation(()->{
+            listener.forceEvent(event);
+        },1L);
+    }
+    
     private boolean onCommandShare(CommandSender sender, Command cmd, String label, String[] args){
         if(args.length>1) return false;
         if (sender.hasPermission("displayitem.share")){ 
             sender.sendMessage(ChatColor.RED+"You don't have permission to use this command.");
             return true;
         }
+        
+        
+        if(!(sender instanceof Player)){
+            sender.sendMessage(ChatColor.RED+"This command can only be ran by a player.");
+            return true;
+        }
+        Player player = (Player) sender;
+        
         
         boolean canTarget = sender.hasPermission("displayitem.share.other");
         boolean canPublish = sender.hasPermission("displayitem.share.all");
@@ -77,14 +105,19 @@ public class DisplayItem extends JavaPlugin{
                 return true;
             }
             String targetUser = args[0];
-            //share with user
+            Player target = Bukkit.getPlayer(targetUser);
+            if (target==null){ 
+                sender.sendMessage(ChatColor.RED+"Can't find a user with the name '"+target+"' online.");
+                return true;
+            }
+            shareItem(player,target);//share with user
         }
         if(willPublish){
             if(!canPublish){
                 sender.sendMessage(ChatColor.RED+"You don't have permission to share items with everyone, try /shareitem <user>.");
                 return true;
             }
-            //share with everyone.
+            shareItem(player,null);//share with everyone.
         }
         
         

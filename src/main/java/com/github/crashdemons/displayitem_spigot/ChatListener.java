@@ -5,6 +5,7 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.events.ChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
@@ -44,6 +45,12 @@ public class ChatListener implements Listener {
     @Nullable
     public ChatEventExecutor getExecutor(){
         return executor;
+    }
+    
+    public boolean forceEvent(ChatEvent e){
+        if(executor==null) return false;
+        executor.onChat(e);
+        return true;
     }
     
     private void reloadPriority(){
