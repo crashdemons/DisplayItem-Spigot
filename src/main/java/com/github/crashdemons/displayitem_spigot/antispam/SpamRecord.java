@@ -5,8 +5,6 @@
  */
 package com.github.crashdemons.displayitem_spigot.antispam;
 
-import org.bukkit.event.Event;
-
 /**
  * Defines an abstract event record for antispam features.
  * <p>
@@ -15,7 +13,7 @@ import org.bukkit.event.Event;
  *
  * @author crash
  */
-public abstract class EventSpamRecord {
+public abstract class SpamRecord {
 
     private final long timestamp;
 
@@ -24,7 +22,7 @@ public abstract class EventSpamRecord {
      * @param record the other record to compare.
      * @return the (positive) number of miliseconds between the two records.
      */
-    public long timeFrom(EventSpamRecord record){
+    public long timeFrom(SpamRecord record){
         return  Math.abs(record.timestamp - timestamp);
     }
     
@@ -38,7 +36,7 @@ public abstract class EventSpamRecord {
      * @return Whether the record is close to the other record, given the
      * parameters.
      */
-    public boolean closeTo(EventSpamRecord record, long thresholdMs) {
+    public boolean closeTo(SpamRecord record, long thresholdMs) {
         return timeFrom(record) < thresholdMs;
     }
 
@@ -58,18 +56,17 @@ public abstract class EventSpamRecord {
      * @param record the spam record to compare
      * @return whether the provided spam record matches
      */
-    public abstract boolean matches(EventSpamRecord record);
+    public abstract boolean matches(SpamRecord record);
     
 
     /**
-     * Constructs the event record about an event.
+     * Constructs the event record.
      * <p>
      * Note: this base class does not store any event-specific information
      * except the time, that is up to child classes to do.
      *
-     * @param event the bukkit event to record information about.
      */
-    public EventSpamRecord(Event event) {
+    public SpamRecord() {
         timestamp = System.currentTimeMillis();
     }
 }

@@ -1,15 +1,14 @@
 package com.github.crashdemons.displayitem_spigot.antispam;
 
 import java.util.UUID;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.entity.Player;
 
 /**
- * Helper class that records and detects PlayerInteractEvent right-click spam
- * for playerheads.
+ * Helper class that records and detects Spammed events from a player
  *
  * @author crash
  */
-public class ItemSpamPreventer extends EventSpamPreventer {
+public class ItemSpamPreventer extends SpamPreventer {
 
     private final long interactThresholdMs;
 
@@ -18,13 +17,12 @@ public class ItemSpamPreventer extends EventSpamPreventer {
         interactThresholdMs = timeMS;
     }
 
-    private final class ItemRecord extends EventSpamRecord {
+    private final class ItemRecord extends SpamRecord {
 
         final UUID playerId;
 
-        public ItemRecord(AsyncPlayerChatEvent event) {
-            super(event);
-            playerId = event.getPlayer().getUniqueId();
+        public ItemRecord(Player player) {
+            playerId = player.getUniqueId();
         }
 
         boolean closeTo(ItemRecord record) {
@@ -32,7 +30,7 @@ public class ItemSpamPreventer extends EventSpamPreventer {
         }
         
         @Override
-        public boolean matches(EventSpamRecord record){
+        public boolean matches(SpamRecord record){
             if(record instanceof ItemRecord) return matchesItemRecord((ItemRecord) record);
             return false;
         }
@@ -49,13 +47,12 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * Checks an interaction event internally and prepares a result after
      * analyzing the event.
      *
-     * @param event The PlayerInteractEvent to send to the spam-preventer.
+     * @param player The player to check a possible spam event for
      * @return The Spam-detection Result object
-     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
      */
-    public SpamResult checkEvent(AsyncPlayerChatEvent event){//TODO: need combined synchronization with recordEvent
+    public SpamResult checkEvent(Player player){//TODO: need combined synchronization with recordEvent
         synchronized(records){
-            return checkRecord(new ItemRecord(event), interactThresholdMs);
+            return checkRecord(new ItemRecord(player), interactThresholdMs);
         }
     }
     
@@ -64,12 +61,12 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * Records an interaction event internally and prepares a result after
      * analyzing the event.
      *
-     * @param event The PlayerInteractEvent to send to the spam-preventer.
+     * @param player The player to record a possible spam event for
      * @return The Spam-detection Result object
-     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
+     * @see SpamPreventer#recordEvent(org.bukkit.event.Event)
      */
-    public SpamResult recordEvent(AsyncPlayerChatEvent event) {
-        return recordEvent(event, false, false);
+    public SpamResult recordEvent(Player player) {
+        return recordEvent(player, false, false);
     }
     
 
@@ -77,15 +74,15 @@ public class ItemSpamPreventer extends EventSpamPreventer {
      * Analyzes an interaction event internally and prepares a spam detection result.
      * Records the event depending on the state of spam result, if enabled.
      *
-     * @param event The PlayerInteractEvent to send to the spam-preventer.
+     * @param player The player to record a possible spam event for
      * @param recordConditionally Whether recording the event is conditional on the state of the result.
      * @param recordResultState The state of the spam-detection result that needs to be recorded.
      * @return The Spam-detection Result object
-     * @see EventSpamPreventer#recordEvent(org.bukkit.event.Event)
+     * @see SpamPreventer#recordEvent(org.bukkit.event.Event)
      */
-    public SpamResult recordEvent(AsyncPlayerChatEvent event, boolean recordConditionally, boolean recordResultState) {
+    public SpamResult recordEvent(Player player, boolean recordConditionally, boolean recordResultState) {
         synchronized(records){
-            ItemRecord record = new ItemRecord(event);
+            ItemRecord record = new ItemRecord(player);
             SpamResult result = checkRecord(record, interactThresholdMs);
             if(recordConditionally){
                 if(result.isSpam() == recordResultState) addRecord(record);

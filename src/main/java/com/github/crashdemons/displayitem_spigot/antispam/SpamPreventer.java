@@ -5,7 +5,6 @@
  */
 package com.github.crashdemons.displayitem_spigot.antispam;
 
-import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * Child classes are expected to create their own EventSpamRecord implementation and handle adding internal records through this class.
  * @author crash
  */
-public abstract class EventSpamPreventer {
+public abstract class SpamPreventer {
     /**
      * The number of internal records to keep for spam preventers. Default is 5.
      */
@@ -26,19 +25,19 @@ public abstract class EventSpamPreventer {
      * These are generally filled circularly by addRecord()
      * @see #addRecord(com.github.crashdemons.playerheads.antispam.EventSpamRecord) 
      */
-    protected final EventSpamRecord[] records; // = new EventSpamRecord[RECORDS];
+    protected final SpamRecord[] records; // = new EventSpamRecord[RECORDS];
     private volatile int next = 0;
     
-    public EventSpamPreventer(int numRecords){
+    public SpamPreventer(int numRecords){
         recordCount=numRecords;
-        records=new EventSpamRecord[recordCount];
+        records=new SpamRecord[recordCount];
     }
     
     /**
      * Adds a record to internal (circular) storage.
      * @param record the record to add.
      */
-    protected synchronized void addRecord(EventSpamRecord record){
+    protected synchronized void addRecord(SpamRecord record){
         records[next] = record;
         next = (next+1)%recordCount;
     }
@@ -49,11 +48,11 @@ public abstract class EventSpamPreventer {
      * @return 
      */
     @Nullable
-    protected synchronized EventSpamRecord getMostRecentRecord(EventSpamRecord record){
+    protected synchronized SpamRecord getMostRecentRecord(SpamRecord record){
         int i = Math.floorMod(next-1,recordCount);//start at the previously-assigned record
         
         long minTimeBetween=-1;
-        EventSpamRecord minRecord=null;
+        SpamRecord minRecord=null;
         
         for(int n=0; n<recordCount; n++){//only check each of the records once.
             if(records[i]!=null && records[i].matches(record)){//the records are validly matched (using event criteria)
@@ -68,8 +67,8 @@ public abstract class EventSpamPreventer {
         return minRecord;
     }
     
-    protected SpamResult checkRecord(EventSpamRecord record, long thresholdMs){
-        EventSpamRecord matchedRecord = getMostRecentRecord(record);
+    protected SpamResult checkRecord(SpamRecord record, long thresholdMs){
+        SpamRecord matchedRecord = getMostRecentRecord(record);
         if(matchedRecord==null) return new SpamResult(false,0);
         return new SpamResult(matchedRecord.closeTo(record, thresholdMs), matchedRecord.timeFrom(record));
     }

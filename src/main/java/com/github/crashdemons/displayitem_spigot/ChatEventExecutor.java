@@ -49,13 +49,13 @@ public class ChatEventExecutor implements EventExecutor {
         onChat(event);
     }
     
-    private boolean checkSpam(Player player,AsyncPlayerChatEvent event,String message){
+    private boolean checkSpam(Player player,String message){
         if(!player.hasPermission("displayitem.bypasscooldown")){
 
 
             boolean detectionsResetTimer = DisplayItem.plugin.getConfig().getBoolean("displayitem.spamdetectionsresetcooldown");
             boolean recordEventConditionally = !detectionsResetTimer;//detections reset the cooldown by recording everything (unconditionally)
-            SpamResult spamResult = spampreventer.recordEvent(event,recordEventConditionally,false);
+            SpamResult spamResult = spampreventer.recordEvent(player,recordEventConditionally,false);
             if(spamResult.isSpam()){
                 long cooldown = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
                 String errormessage = DisplayItem.plugin.getConfig().getString("displayitem.messages.cooldown");
@@ -83,7 +83,7 @@ public class ChatEventExecutor implements EventExecutor {
         if(!player.hasPermission("displayitem.replace")) itemNeedsReplacing=false;
         
         
-        if(itemNeedsReplacing && checkSpam(player,event,message)) itemNeedsReplacing=false;
+        if(itemNeedsReplacing && checkSpam(player,message)) itemNeedsReplacing=false;
         
 
 
