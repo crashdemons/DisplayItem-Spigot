@@ -54,6 +54,44 @@ public class DisplayItem extends JavaPlugin{
         getLogger().info("disabled");
     }
 
+    private boolean onCommandShare(CommandSender sender, Command cmd, String label, String[] args){
+        if(args.length>1) return false;
+        if (sender.hasPermission("displayitem.share")){ 
+            sender.sendMessage(ChatColor.RED+"You don't have permission to use this command.");
+            return true;
+        }
+        
+        boolean canTarget = sender.hasPermission("displayitem.share.other");
+        boolean canPublish = sender.hasPermission("displayitem.share.all");
+        if (!canTarget && !canPublish){ 
+            sender.sendMessage(ChatColor.RED+"You don't have permission to share items with anyone.");
+            return true;
+        }
+        
+        
+        boolean hasTarget = args.length==1;
+        boolean willPublish = args.length==0;//same as !hasTarget given our preconditions
+        if(hasTarget){
+            if(!canTarget){
+                sender.sendMessage(ChatColor.RED+"You don't have permission to share items with someone, try just /shareitem.");
+                return true;
+            }
+            String targetUser = args[0];
+            //share with user
+        }
+        if(willPublish){
+            if(!canPublish){
+                sender.sendMessage(ChatColor.RED+"You don't have permission to share items with everyone, try /shareitem <user>.");
+                return true;
+            }
+            //share with everyone.
+        }
+        
+        
+        
+        
+        return true;
+    }
     
     private boolean onCommandReload(CommandSender sender, Command cmd, String label, String[] args){
         if(args.length!=0) return false;

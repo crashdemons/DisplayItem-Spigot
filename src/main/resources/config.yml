@@ -17,6 +17,11 @@ displayitem:
     overridechatformat: false
     #how the chat message line should appear (using formatting codes and replacements)
     format: '&r%displayname%&f: %message%'
+    
+    #how a user sharing an item with /shareitem should appear
+    #note that %replacement% should appear somewhere in the message if you want the item to appear at all.
+    shareformatline: '*&r%displayname%&f %message%'
+    shareformatmessage: 'shared an item: %replacement%'
 
     #how many item-display records history to keep for detecting spam
     spamdetectionbuffer: 5
