@@ -7,6 +7,8 @@ package com.github.crashdemons.displayitem_spigot;
 
 import com.github.crashdemons.displayitem_spigot.antispam.ItemSpamPreventer;
 import com.github.crashdemons.displayitem_spigot.antispam.SpamResult;
+import com.github.crashdemons.displayitem_spigot.events.ChatEvent;
+import com.github.crashdemons.displayitem_spigot.events.AsyncPlayerChatEventAdapter;
 import com.github.crashdemons.displayitem_spigot.events.ReplacedChatEvent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
@@ -69,7 +71,16 @@ public class ChatEventExecutor implements EventExecutor {
         return false;
     }
     
+    private void replaceItem(Player player, String format, String message){
+        boolean color = player.hasPermission("displayitem.colorname");
+        SplitChatMessage chatLineSplit = itemreplacer.chatLineInsertItem(player, format, message, color);
+    }
+    
     public void onChat(@NotNull AsyncPlayerChatEvent event){
+        onChat(new AsyncPlayerChatEventAdapter(event));
+    }
+    
+    public void onChat(@NotNull ChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
         Player player = event.getPlayer();
         String format = event.getFormat();

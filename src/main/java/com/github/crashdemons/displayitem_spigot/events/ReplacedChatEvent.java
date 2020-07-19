@@ -14,7 +14,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  *
  * @author crashdemons (crashenator at gmail.com)
  */
-public class ReplacedChatEvent extends AsyncPlayerChatEvent{
+public class ReplacedChatEvent extends AsyncPlayerChatEvent implements ChatEvent{
     
     private BaseComponent[] components = null;
     
@@ -31,7 +31,7 @@ public class ReplacedChatEvent extends AsyncPlayerChatEvent{
     }
     
     
-    public ReplacedChatEvent(AsyncPlayerChatEvent parentEvent){
+    public ReplacedChatEvent(ChatEvent parentEvent){
         super(parentEvent.isAsynchronous(),parentEvent.getPlayer(), parentEvent.getMessage(), parentEvent.getRecipients());
         this.setFormat(parentEvent.getFormat());
     }
