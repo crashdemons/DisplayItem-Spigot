@@ -1,5 +1,6 @@
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.chat.ChatListener;
 import com.github.crashdemons.displayitem_spigot.calibrator.Calibrator;
 import com.github.crashdemons.displayitem_spigot.events.ShareCommandEvent;
 import com.github.crashdemons.displayitem_spigot.plugins.placeholderapi.PlaceholderSupport;

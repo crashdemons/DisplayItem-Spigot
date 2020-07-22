@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.displayitem_spigot;
+package com.github.crashdemons.displayitem_spigot.chat;
 
+import com.github.crashdemons.displayitem_spigot.MacroReplacements;
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
 import com.sainttx.util.HoverComponentManager;
 import com.sainttx.util.ItemJsonLengthException;
 import net.md_5.bungee.api.chat.BaseComponent;

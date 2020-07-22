@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.displayitem_spigot;
+package com.github.crashdemons.displayitem_spigot.chat;
 
+import com.github.crashdemons.displayitem_spigot.MacroReplacements;
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
 import com.github.crashdemons.displayitem_spigot.antispam.ItemSpamPreventer;
 import com.github.crashdemons.displayitem_spigot.antispam.SpamResult;
 import com.github.crashdemons.displayitem_spigot.events.ChatEvent;

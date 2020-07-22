@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.displayitem_spigot;
+package com.github.crashdemons.displayitem_spigot.chat;
 
+import com.github.crashdemons.displayitem_spigot.MacroReplacements;
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

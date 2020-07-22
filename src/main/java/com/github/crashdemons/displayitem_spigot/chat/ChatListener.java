@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.github.crashdemons.displayitem_spigot;
+package com.github.crashdemons.displayitem_spigot.chat;
 
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
 import com.github.crashdemons.displayitem_spigot.events.ChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
