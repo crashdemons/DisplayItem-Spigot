@@ -5,8 +5,10 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.ShulkerBox;
@@ -33,12 +35,13 @@ public class ItemMinimizer {
             return stack;
         }
 
+        if(stack.getType().name().toUpperCase().endsWith("SHULKER_BOX")) return minimizeShulker(stack);
+        
+        
         switch (stack.getType()) {
             case WRITTEN_BOOK:
             case WRITABLE_BOOK:
                 return minimizeBook(stack);
-            case SHULKER_BOX:
-                return minimizeShulker(stack);
             default:
                 return stack;
         }
@@ -91,8 +94,42 @@ public class ItemMinimizer {
         return pages.stream().map((page) -> "").collect(Collectors.toList());
     }
 
+    private static final int NUM_VISIBLE_SHULKER_ITEMS = 6;
+    private static final Material UNSEEN_ITEM_PLACEHOLDER = Material.ICE;
+    
     private static Inventory minimizeShulkerInventory(Inventory inv) {
-        return null;
+        
+        for(int i = 0 ; i < inv.getSize() ; i++) {
+            ItemStack item = inv.getItem(i);
+            
+            if(i<NUM_VISIBLE_SHULKER_ITEMS) item = minimizeNamedShulkerItem(item);
+            else item = minimizeUnseenShulkerItem(item);
+            
+            inv.setItem(i, item);
+        }
+        
+        
+        return inv;
     }
 
+    
+    private static ItemStack minimizeNamedShulkerItem(ItemStack stack){
+        if(stack==null) return stack;
+        if(stack.getType()==Material.AIR) return stack;
+        ItemStack replacement = new ItemStack(stack.getType());
+        replacement.setAmount(stack.getAmount());
+        
+        if(stack.hasItemMeta()){
+            ItemMeta replacementMeta = Bukkit.getItemFactory().getItemMeta(stack.getType());
+            ItemMeta oldMeta = stack.getItemMeta();
+            if(oldMeta.hasDisplayName()) replacementMeta.setDisplayName(oldMeta.getDisplayName());
+            replacement.setItemMeta(replacementMeta);
+        }
+        return replacement;
+    }
+    private static ItemStack minimizeUnseenShulkerItem(ItemStack stack){
+        ItemStack placeholder = new ItemStack(UNSEEN_ITEM_PLACEHOLDER);
+        placeholder.setAmount(stack.getAmount());
+        return placeholder;
+    }
 }

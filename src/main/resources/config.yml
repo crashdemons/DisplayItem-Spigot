@@ -50,6 +50,8 @@ displayitem:
     #sets whether a detected spam-post resets the spam timer (each failed post makes the user wait the full duration again) - prior to 2.4.2, the behavior of this was 'true'.
     spamdetectionsresetcooldown: false
     
+    #modify items posted in chat to contain less tags
+    minimize-items: true
     
     #sets an upper limit on the amount of JSON characters for the item to have a hover component
     jsonlimit: 8000
