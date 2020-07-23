@@ -7,10 +7,12 @@ package com.github.crashdemons.displayitem_spigot.chat;
 
 import com.github.crashdemons.displayitem_spigot.MacroReplacements;
 import com.github.crashdemons.displayitem_spigot.DisplayItem;
+import com.github.crashdemons.displayitem_spigot.ItemMinimizer;
 import com.sainttx.util.HoverComponentManager;
 import com.sainttx.util.ItemJsonLengthException;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -62,6 +64,10 @@ public class MessageFormatter{
         SplitChatMessage bukkitTextSplit = SplitChatMessage.fromWithExternalReplacement(messageText, replacestr,   metareplacestr,replacestr);
         
         ItemStack item = player.getInventory().getItemInMainHand();
+        
+        if(DisplayItem.plugin.getConfig().getBoolean("displayitem.minimize-items")) item = ItemMinimizer.minimize(item);
+                
+        
         BaseComponent[] itemComponent=formatItemComponents(player,item,colorize);
         
         bukkitTextSplit.content = itemComponent;
