@@ -90,7 +90,7 @@ public class ItemMinimizer {
 
     }
 
-    private static List<String> minimizeBookPages(List<String> pages) {
+    private static List<String> minimizeBookPages(List<String> pages) {//change all pages to blank
         return pages.stream().map((page) -> "").collect(Collectors.toList());
     }
 
@@ -102,8 +102,8 @@ public class ItemMinimizer {
         for(int i = 0 ; i < inv.getSize() ; i++) {
             ItemStack item = inv.getItem(i);
             
-            if(i<NUM_VISIBLE_SHULKER_ITEMS) item = minimizeNamedShulkerItem(item);
-            else item = minimizeUnseenShulkerItem(item);
+            if(i<NUM_VISIBLE_SHULKER_ITEMS) item = minimizeNamedShulkerItem(item);//replace any items seen on the hover list (6) with versions that are ONLY named
+            else item = minimizeUnseenShulkerItem(item);//replace any items in the box but not seen with placeholders
             
             inv.setItem(i, item);
         }
@@ -113,7 +113,7 @@ public class ItemMinimizer {
     }
 
     
-    private static ItemStack minimizeNamedShulkerItem(ItemStack stack){
+    private static ItemStack minimizeNamedShulkerItem(ItemStack stack){//create a name-only copy of an item, if possible
         if(stack==null) return stack;
         if(stack.getType()==Material.AIR) return stack;
         ItemStack replacement = new ItemStack(stack.getType());
@@ -127,7 +127,7 @@ public class ItemMinimizer {
         }
         return replacement;
     }
-    private static ItemStack minimizeUnseenShulkerItem(ItemStack stack){
+    private static ItemStack minimizeUnseenShulkerItem(ItemStack stack){//create a placeholder item with the same amount
         ItemStack placeholder = new ItemStack(UNSEEN_ITEM_PLACEHOLDER);
         placeholder.setAmount(stack.getAmount());
         return placeholder;
