@@ -115,7 +115,7 @@ public class ItemMinimizer {
     
     private static ItemStack minimizeNamedShulkerItem(ItemStack stack){//create a name-only copy of an item, if possible
         if(stack==null) return stack;
-        if(stack.getType()==Material.AIR) return stack;
+        if(stack.getType().isAir()) return stack;
         ItemStack replacement = new ItemStack(stack.getType());
         replacement.setAmount(stack.getAmount());
         
@@ -128,6 +128,8 @@ public class ItemMinimizer {
         return replacement;
     }
     private static ItemStack minimizeUnseenShulkerItem(ItemStack stack){//create a placeholder item with the same amount
+        if(stack==null) return stack;
+        if(stack.getType().isAir()) return stack;
         ItemStack placeholder = new ItemStack(UNSEEN_ITEM_PLACEHOLDER);
         placeholder.setAmount(stack.getAmount());
         return placeholder;
