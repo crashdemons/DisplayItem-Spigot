@@ -5,6 +5,7 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.DisplayItem;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;

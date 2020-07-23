@@ -5,6 +5,8 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
+import com.github.crashdemons.displayitem_spigot.chat.TextUtils;
+import com.github.crashdemons.displayitem_spigot.chat.SplitChatMessage;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
