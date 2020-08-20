@@ -25,13 +25,14 @@ public class ShareCommandEvent implements ChatEvent {
     String format;
     String message;
     boolean cancelled;
+    boolean privatemessage = false;
     
     private static String getFormat(String name){
         return DisplayItem.plugin.getConfig().getString("displayitem.shareformat"+name);
     }
     
     
-    public ShareCommandEvent(Player sender, Set<Player> recipients, String format, String message){
+    public ShareCommandEvent(Player sender, Set<Player> recipients, String format, String message, boolean privatemsg){
         //String format = DisplayItem.plugin.getConfig().getString("displayitem.shareformatbukkit");
         //String message = DisplayItem.plugin.getConfig().getString("displayitem.shareformatmessage");
         format = MacroReplacements.replaceAll(player, format, "%2$s", "", false, -1, false);
@@ -43,14 +44,19 @@ public class ShareCommandEvent implements ChatEvent {
         this.format=format;
         this.message=message;
         this.recipients=recipients;
+        this.privatemessage=privatemsg;
     }
     
     public ShareCommandEvent(Player sender, Player recipient){
-        this(sender,new HashSet<>(Collections.singleton(recipient)),getFormat("bukkitprivate"),getFormat("messageprivate"));
+        this(sender,new HashSet<>(Collections.singleton(recipient)),getFormat("bukkitprivate"),getFormat("messageprivate"),true);
     }
     
     public ShareCommandEvent(Player sender){
-        this(sender,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())),getFormat("bukkit"),getFormat("message"));
+        this(sender,new HashSet<>(ImmutableList.copyOf(Bukkit.getOnlinePlayers())),getFormat("bukkit"),getFormat("message"),false);
+    }
+    
+    public boolean isPrivateMessage(){
+        return privatemessage;
     }
     
     public Player getPlayer(){
