@@ -35,6 +35,7 @@ public class ChatEventExecutor implements EventExecutor {
     private final ChatListener listener;
     private final EventPriority priority;
     private final boolean sendModifiedChatEvent;
+    private final boolean blockPrivateChatEvent;
     
     
     
@@ -45,6 +46,7 @@ public class ChatEventExecutor implements EventExecutor {
         int threshold = DisplayItem.plugin.getConfig().getInt("displayitem.spamthreshold");
         spampreventer = new ItemSpamPreventer(records,threshold);
         sendModifiedChatEvent = DisplayItem.plugin.getConfig().getBoolean("displayitem.sendmodifiedchatevent");
+        blockPrivateChatEvent = DisplayItem.plugin.getConfig().getBoolean("displayitem.blockprivatechatevent");
     }
     
     @Override
@@ -87,6 +89,11 @@ public class ChatEventExecutor implements EventExecutor {
     public void onChat(@NotNull ChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
         boolean isShareCommand = event instanceof ShareCommandEvent;
+        boolean isPrivateMessage = false;
+        if(isShareCommand){
+            ShareCommandEvent shareEvent = (ShareCommandEvent) event;
+            isPrivateMessage = shareEvent.isPrivateMessage();
+        }
         
         Player player = event.getPlayer();
         String format = event.getFormat();
@@ -119,7 +126,7 @@ public class ChatEventExecutor implements EventExecutor {
             replacementEvent.setMessage(legacyMessage);
             replacementEvent.setMessageComponents(chatLineSplit.content);
 
-            if(sendModifiedChatEvent){
+            if(sendModifiedChatEvent && (!isPrivateMessage || !blockPrivateChatEvent)){
                 Bukkit.getServer().getPluginManager().callEvent(replacementEvent);
                 if(replacementEvent.isCancelled()) return;
             }

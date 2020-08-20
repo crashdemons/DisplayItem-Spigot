@@ -59,6 +59,9 @@ displayitem:
     listenerpriority: NORMAL
     #whether or not to send a ReplacedChatEvent out of courtesy to other plugins
     sendmodifiedchatevent: true
+    #whether to block DI's chat events for private /shareitem posts (prevents visibility to plugins like DiscordSRV)
+    blockprivatechatevent: true
+    
     messages:
         #message displayed to a user when the item-replacement is detected as spam.
         cooldown: '&cPlease wait %cooldownremainderS% seconds before sharing your item again.'
