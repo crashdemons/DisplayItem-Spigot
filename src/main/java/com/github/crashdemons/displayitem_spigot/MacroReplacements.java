@@ -304,6 +304,9 @@ public class MacroReplacements {
 
     private static String getBookTitle(BookMeta book, String defaultTitle) {
         String title = "";
+        
+        if(book.hasDisplayName()) return book.getDisplayName();
+        
         if (book != null && book.hasTitle()) {
             title = book.getTitle();
         }
