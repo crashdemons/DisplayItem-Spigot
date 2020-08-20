@@ -196,24 +196,20 @@ public class MacroReplacements {
     private static String getItemName(CachedDetails details, String bookformat, boolean usebookname, boolean colorize) {
         ItemMeta meta = details.meta;
         BookMeta book = details.book;
+        
+        if (usebookname && book != null) {
+            String bookname = replaceAllCached(details.offPlayer, bookformat, "", "", false,  -1, colorize, details);
+            //DisplayItem.plugin.getLogger().info("...getItemName usebookname: bookname="+bookname+"|"+strDebug(bookname)+" len="+bookname.length()+" bookformat="+bookformat);//TXODO: debug line
+            if (!ChatColor.stripColor(bookname).isEmpty()) {
+                return bookname;
+            }
+        }
         if (meta != null) {
             if (meta.hasDisplayName()) {
-                
-
-                //BaseComponent[] components = TextComponent.fromLegacyText(meta.getDisplayName());
-                //String reformatted = TextUtils.toLegacyText(components, true);
-                
                 return meta.getDisplayName();
             }
             if (meta.hasLocalizedName()) {
                 return meta.getLocalizedName();
-            }
-            if (usebookname && book != null) {
-                String bookname = replaceAllCached(details.offPlayer, bookformat, "", "", false,  -1, colorize, details);
-                //DisplayItem.plugin.getLogger().info("...getItemName usebookname: bookname="+bookname+"|"+strDebug(bookname)+" len="+bookname.length()+" bookformat="+bookformat);//TXODO: debug line
-                if (!ChatColor.stripColor(bookname).isEmpty()) {
-                    return bookname;
-                }
             }
         }
         return getMaterialTypename(details.item.getType());
