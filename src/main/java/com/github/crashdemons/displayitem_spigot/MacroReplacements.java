@@ -5,10 +5,10 @@
  */
 package com.github.crashdemons.displayitem_spigot;
 
-import com.github.crashdemons.displayitem_spigot.DisplayItem;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -229,6 +229,14 @@ public class MacroReplacements {
         return requestMacroCached(macroName, "", "", params);
     }
 
+    private static boolean containsIgnoreCase(String haystack, String needle){
+        return Pattern.compile(Pattern.quote(needle), Pattern.CASE_INSENSITIVE).matcher(haystack).find();
+    }
+    private static String replaceIgnoreCase(String haystack, String needle, String needlereplacement){
+        return haystack.replaceAll("(?i)"+Pattern.quote(needle), needlereplacement);
+    }
+    
+    
     private static String replaceAllCached(OfflinePlayer player, String replaceIn, String messageValue, String bookformat, boolean usebookname, long cooldownremainder, boolean colorize, CachedDetails details) {
 //        DisplayItem.plugin.getLogger().info("...replaceCached replace "+replaceIn+" message="+messageValue);//TXODO: debug line
         if (DisplayItem.plugin.placeholders.isActive()) {
@@ -241,7 +249,7 @@ public class MacroReplacements {
             for (String paddingSuffix : paddingSuffixes) {
                 for (String macroName : supported) {
                     String macro = "%" + macroName + paddingSuffix + formatSuffix + "%";
-                    if (!replaceIn.contains(macro)) {
+                    if (!containsIgnoreCase(replaceIn,macro)) { // !replaceIn.contains(macro)) {
                         continue;
                     }
 
@@ -250,7 +258,7 @@ public class MacroReplacements {
                         //                       DisplayItem.plugin.getLogger().severe("Attempted to automatically replace unsupported macro: "+macroName);
                         continue;
                     }
-                    replaceIn = replaceIn.replace(macro, replacement);
+                    replaceIn = replaceIgnoreCase(replaceIn, macro, replacement);//replaceIn.replace(macro, replacement);
                 }
             }
         }
