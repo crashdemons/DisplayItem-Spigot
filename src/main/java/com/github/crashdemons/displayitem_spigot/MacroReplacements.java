@@ -8,6 +8,7 @@ package com.github.crashdemons.displayitem_spigot;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -224,11 +225,12 @@ public class MacroReplacements {
         MacroParameters params = new MacroParameters(offPlayer, message, bookformat, usebookname, cooldownremainder, colorize, new CachedDetails());
         return requestMacroCached(macroName, "", "", params);
     }
-
+    
     private static boolean containsIgnoreCase(String haystack, String needle){
         return Pattern.compile(Pattern.quote(needle), Pattern.CASE_INSENSITIVE).matcher(haystack).find();
     }
-    private static String replaceIgnoreCase(String haystack, String needle, String needlereplacement){
+    protected static String replaceIgnoreCase(String haystack, String needle, String needlereplacement){
+        needlereplacement = Matcher.quoteReplacement(needlereplacement);//per replaceAll, escape backslashes and dollarsigns
         return haystack.replaceAll("(?i)"+Pattern.quote(needle), needlereplacement);
     }
     
