@@ -107,6 +107,12 @@ public class DisplayItem extends JavaPlugin{
             }
             String targetUser = args[0];
             Player target = Bukkit.getPlayer(targetUser);
+            
+            if(target!=null){
+                if(!player.canSee(target)) target=null;//if the target can't be seen, pretend they couldn't be found.
+            }
+            
+            
             if (target==null){ 
                 sender.sendMessage(ChatColor.RED+"Can't find the user '"+targetUser+"' online.");
                 return true;
