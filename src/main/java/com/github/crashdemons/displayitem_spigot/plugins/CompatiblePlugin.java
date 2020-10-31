@@ -82,7 +82,7 @@ public abstract class CompatiblePlugin extends CompatiblePluginState implements 
      *
      * @return the plugin instance, or null of the plugin name is blank
      */
-    protected final Plugin getPlugin() {
+    protected Plugin getPlugin() {
         //System.out.println("get pluginName: "+pluginName);
         if (pluginName.isEmpty()) {
             return null;
