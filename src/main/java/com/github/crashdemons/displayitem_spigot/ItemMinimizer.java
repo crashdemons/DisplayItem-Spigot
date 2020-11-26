@@ -98,20 +98,29 @@ public class ItemMinimizer {
     private static final Material UNSEEN_ITEM_PLACEHOLDER = Material.ICE;
     
     private static Inventory minimizeShulkerInventory(Inventory inv) {
-        
+        int numVisibleItems = 0;
         for(int i = 0 ; i < inv.getSize() ; i++) {
             ItemStack item = inv.getItem(i);
             
-            if(i<NUM_VISIBLE_SHULKER_ITEMS) item = minimizeNamedShulkerItem(item);//replace any items seen on the hover list (6) with versions that are ONLY named
-            else item = minimizeUnseenShulkerItem(item);//replace any items in the box but not seen with placeholders
-            
-            inv.setItem(i, item);
+            if(isValidShulkerItem(item)){
+                if(numVisibleItems<NUM_VISIBLE_SHULKER_ITEMS){//replace any items seen on the hover list (6) with versions that are ONLY named
+                    item = minimizeNamedShulkerItem(item);
+                    numVisibleItems++;
+                }else item = minimizeUnseenShulkerItem(item);//replace any items in the box but not seen with placeholders
+
+                inv.setItem(i, item);
+            }
         }
         
         
         return inv;
     }
 
+    private static boolean isValidShulkerItem(ItemStack stack){
+        if(stack==null) return false;
+        if(stack.getType().isAir()) return false;
+        return true;
+    }
     
     private static ItemStack minimizeNamedShulkerItem(ItemStack stack){//create a name-only copy of an item, if possible
         if(stack==null) return stack;
