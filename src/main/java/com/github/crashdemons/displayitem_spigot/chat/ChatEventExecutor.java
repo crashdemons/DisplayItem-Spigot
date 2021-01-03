@@ -53,7 +53,7 @@ public class ChatEventExecutor implements EventExecutor {
     public void execute(Listener listener, Event originalEvent) throws EventException {
         if(!(originalEvent instanceof AsyncPlayerChatEvent)) return;
         AsyncPlayerChatEvent event = (AsyncPlayerChatEvent) originalEvent;
-        onChat(event);
+        onChatBukkit(event);
     }
     
     private boolean checkSpam(Player player,String message){
@@ -82,11 +82,12 @@ public class ChatEventExecutor implements EventExecutor {
         return itemreplacer.chatLineInsertItem(player, format, message, color, overridechatformat);
     }
     
-    public void onChat(@NotNull AsyncPlayerChatEvent event){
-        onChat(new AsyncPlayerChatEventAdapter(event));
+    public void onChatBukkit(@NotNull AsyncPlayerChatEvent event){
+        if(event instanceof ChatEvent) onChatInternal((ChatEvent) event);//forward internal chat events (incl. ReplacedChatEvent) directly without adapter
+        else onChatInternal(new AsyncPlayerChatEventAdapter(event));
     }
     
-    public void onChat(@NotNull ChatEvent event){
+    public void onChatInternal(@NotNull ChatEvent event){
         if(event instanceof ReplacedChatEvent) return;
         boolean isShareCommand = event instanceof ShareCommandEvent;
         boolean isPrivateMessage = false;

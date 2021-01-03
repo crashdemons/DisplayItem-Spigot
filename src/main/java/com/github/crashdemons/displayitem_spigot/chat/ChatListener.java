@@ -50,7 +50,7 @@ public class ChatListener implements Listener {
     
     public boolean forceEvent(ChatEvent e){
         if(executor==null) return false;
-        executor.onChat(e);
+        executor.onChatInternal(e);
         return true;
     }
     
