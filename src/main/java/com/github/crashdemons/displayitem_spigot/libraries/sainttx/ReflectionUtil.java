@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.sainttx.util;
+package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
