@@ -11,7 +11,7 @@ displayitem:
     #enable or disable book names showing in chat (shows Written Book if disabled)
     usebooknameformat: true
     #how the book name should appear (using formatting codes and replacements)
-    booknameformat: '&o%booktitle%&r'
+    booknameformat: '&o%booktitleT%&r'
 
     #whether to force a particular chat message format or keep the bukkit-event-provided format
     overridechatformat: false
