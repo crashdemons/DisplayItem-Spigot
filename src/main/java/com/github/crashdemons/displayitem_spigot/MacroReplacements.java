@@ -190,6 +190,8 @@ public class MacroReplacements {
     }
 
     private static String getMaterialTypename(Material mat) {
+        String translatedName = ItemNameTranslationHelper.getMaterialName(mat);
+        if(translatedName!=null) return translatedName;
         return camelCase(mat.name().toLowerCase().replace("_", " "));
 
     }
@@ -213,8 +215,6 @@ public class MacroReplacements {
                 return meta.getLocalizedName();
             }
         }
-        String translatedName = ItemNameTranslationHelper.getMaterialName(details.item);
-        if(translatedName!=null) return translatedName;
         return getMaterialTypename(details.item.getType());
     }
 
