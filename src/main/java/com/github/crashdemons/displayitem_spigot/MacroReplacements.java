@@ -44,6 +44,7 @@ public class MacroReplacements {
         "booktitleU",
         "bookauthor",
         "bookpages",
+        "bookpagesX",
         "message",
         "cooldown",
         "cooldownS",
@@ -416,6 +417,11 @@ public class MacroReplacements {
             case "bookauthor":
                 if (book != null && book.hasAuthor()) {
                     return book.getAuthor();
+                }
+                break;
+            case "bookpagesX":
+                if (book != null && book.hasPages()) {
+                    return "" + book.getPages().size()+"P";
                 }
                 break;
             case "bookpages":
