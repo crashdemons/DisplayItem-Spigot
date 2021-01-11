@@ -31,15 +31,18 @@ public class ItemNameTranslationHelper {
     public static String getMaterialName(Material mat){
         if(hasClass("net.md_5.bungee.chat.TranslationRegistry")){
         
-
-            String matName = mat.name().toLowerCase();//NOTE: bukkit name may not always match internal minecraft name!
-            String trans = TranslationRegistry.INSTANCE.translate( "item.minecraft."+matName );
-            return trans;
+            try{
+                String matName = mat.name().toLowerCase();//NOTE: bukkit name may not always match internal minecraft name!
+                String trans = TranslationRegistry.INSTANCE.translate( "item.minecraft."+matName );
+                return trans;
+            }catch(Exception e){
+                return null;
+            }
 
             //BaseComponent[] components = ComponentSerializer.parse("{\"translate\":\"block.minecraft."+matName+"\"}");
             //return BaseComponent.toPlainText(components);
         }else{
-            DisplayItem.plugin.getLogger().warning("BungeeChat TranslationRegistry support missing! please update your server!");
+            //DisplayItem.plugin.getLogger().warning("BungeeChat TranslationRegistry support missing! please update your server!");
             return null;
         }
     }
