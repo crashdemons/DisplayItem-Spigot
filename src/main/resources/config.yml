@@ -11,12 +11,12 @@ displayitem:
     #enable or disable book names showing in chat (shows Written Book if disabled)
     usebooknameformat: true
     #how the book name should appear (using formatting codes and replacements)
-    booknameformat: '&o%booktitleT%&r'
+    booknameformat: '&o%booktitleT%&r&a%bookpagesXPL%'
 
     #whether to force a particular chat message format or keep the bukkit-event-provided format
     overridechatformat: false
     #how the chat message line should appear (using formatting codes and replacements)
-    format: '&r%displayname%&f: %message%'
+    format: '&f<&f%displayname%&f> &r%message%'
     
     #how the message shared in chat should appear using bukkit format
     #this is a String.format() compatible string where the username is %1$s and the message is %2$s
