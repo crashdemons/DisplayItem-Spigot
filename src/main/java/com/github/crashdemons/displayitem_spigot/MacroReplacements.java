@@ -107,7 +107,7 @@ public class MacroReplacements {
         public ItemMeta getMeta(OfflinePlayer offplayer) {
             if (meta == null) {
                 getItem(offplayer);
-                if (item != null && item.hasItemMeta()) {
+                if (item != null) {//note: don't check hasItemMeta because we also want the default item meta (see getItemMeta implementation)
                     meta = item.getItemMeta();
                 }
             }
@@ -213,6 +213,8 @@ public class MacroReplacements {
                 return meta.getLocalizedName();
             }
         }
+        String translatedName = ItemNameTranslationHelper.getMaterialName(details.item);
+        if(translatedName!=null) return translatedName;
         return getMaterialTypename(details.item.getType());
     }
 
