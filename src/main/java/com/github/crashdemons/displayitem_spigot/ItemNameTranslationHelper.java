@@ -36,6 +36,9 @@ public class ItemNameTranslationHelper {
             try {
                 String matName = mat.name().toLowerCase();//NOTE: bukkit name may not always match internal minecraft name!
                 String trans = TranslationRegistry.INSTANCE.translate("item.minecraft." + matName);
+                if(trans.contains(".minecraft")) trans=null;
+                if(trans==null) trans = TranslationRegistry.INSTANCE.translate("block.minecraft." + matName);
+                if(trans.contains(".minecraft")) trans=null;
                 return trans;
             } catch (Exception e) {
                 return null;
