@@ -66,6 +66,7 @@ public class ReflectionUtil {
      * @return The class
      */
     public static Class<?> getNMSClass(String nmsClassName) {
+        if(nmsClassName==null) throw new IllegalArgumentException("passed classname was null");
         if (loadedNMSClasses.containsKey(nmsClassName)) {
             return loadedNMSClasses.get(nmsClassName);
         }
@@ -91,6 +92,7 @@ public class ReflectionUtil {
      * @return the found class at the specified path
      */
     public synchronized static Class<?> getOBCClass(String obcClassName) {
+        if(obcClassName==null) throw new IllegalArgumentException("passed classname was null");
         if (loadedOBCClasses.containsKey(obcClassName)) {
             return loadedOBCClasses.get(obcClassName);
         }
@@ -117,6 +119,7 @@ public class ReflectionUtil {
      * @return The players connection
      */
     public static Object getConnection(Player player) {
+        if(player==null) throw new IllegalArgumentException("passed player was null");
         Method getHandleMethod = getMethod(player.getClass(), "getHandle");
 
         if (getHandleMethod != null) {
@@ -140,6 +143,7 @@ public class ReflectionUtil {
      * @return The constructor object
      */
     public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... params) {
+        if(clazz==null) throw new IllegalArgumentException("passed class was null");
         try {
             return clazz.getConstructor(params);
         } catch (NoSuchMethodException e) {
@@ -156,6 +160,7 @@ public class ReflectionUtil {
      * @return The method with appropriate paramaters
      */
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... params) {
+        if(clazz==null) throw new IllegalArgumentException("passed class was null");
         if (!loadedMethods.containsKey(clazz)) {
             loadedMethods.put(clazz, new HashMap<String, Method>());
         }
@@ -187,6 +192,7 @@ public class ReflectionUtil {
      * @return The field object
      */
     public static Field getField(Class<?> clazz, String fieldName) {
+        if(clazz==null) throw new IllegalArgumentException("passed class was null");
         if (!loadedFields.containsKey(clazz)) {
             loadedFields.put(clazz, new HashMap<String, Field>());
         }
