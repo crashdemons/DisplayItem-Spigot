@@ -24,16 +24,11 @@ public class ReflectionUtil {
      * The server version string to location NMS & OBC classes
      */
     private static String versionString;
-
-    /*
-     * Cache of NMS classes that we've searched for
+    
+    /**
+     * Cache of FQN classes that we've searched for
      */
-    private static Map<String, Class<?>> loadedNMSClasses = new HashMap<String, Class<?>>();
-
-    /*
-     * Cache of OBS classes that we've searched for
-     */
-    private static Map<String, Class<?>> loadedOBCClasses = new HashMap<String, Class<?>>();
+    private static Map<String,Class<?>> loadedClasses = new HashMap<>();
 
     /*
      * Cache of methods that we've found in particular classes
@@ -48,7 +43,7 @@ public class ReflectionUtil {
     /**
      * Gets the version string for NMS & OBC class paths
      *
-     * @return The version string of OBC and NMS packages
+     * @return The version string of OBC and NMS packages with a trailing period
      */
     public static String getVersion() {
         if (versionString == null) {
@@ -58,59 +53,58 @@ public class ReflectionUtil {
 
         return versionString;
     }
-
-    /**
-     * Get an NMS Class
-     *
-     * @param nmsClassName The name of the class
-     * @return The class
-     */
-    public static Class<?> getNMSClass(String nmsClassName) {
-        if(nmsClassName==null) throw new IllegalArgumentException("passed classname was null");
-        if (loadedNMSClasses.containsKey(nmsClassName)) {
-            return loadedNMSClasses.get(nmsClassName);
-        }
-
-        String clazzName = "net.minecraft.server." + getVersion() + nmsClassName;
-        Class<?> clazz;
+    
+    private static Class<?> getClassUncached(String class_fqn){
+        if(class_fqn==null) throw new IllegalArgumentException("passed classname was null");
+        Class<?> clazz = null;
+        
+        //System.out.println("DI-DEBUG: Retrieving class FQN "+class_fqn);
 
         try {
-            clazz = Class.forName(clazzName);
+            clazz = Class.forName(class_fqn);
+            //System.out.println("   DI-DEBUG: found "+clazz);
         } catch (Throwable t) {
-            t.printStackTrace();
-            return loadedNMSClasses.put(nmsClassName, null);
+            //t.printStackTrace();
+            return clazz;
         }
-
-        loadedNMSClasses.put(nmsClassName, clazz);
+        
         return clazz;
     }
-
-    /**
-     * Get a class from the org.bukkit.craftbukkit package
-     *
-     * @param obcClassName the path to the class
-     * @return the found class at the specified path
-     */
-    public synchronized static Class<?> getOBCClass(String obcClassName) {
-        if(obcClassName==null) throw new IllegalArgumentException("passed classname was null");
-        if (loadedOBCClasses.containsKey(obcClassName)) {
-            return loadedOBCClasses.get(obcClassName);
+    public static Class<?> getClass(String class_fqn){
+        if(class_fqn==null) throw new IllegalArgumentException("passed classname was null");
+        if (loadedClasses.containsKey(class_fqn)) {
+            return loadedClasses.get(class_fqn);
         }
-
-        String clazzName = "org.bukkit.craftbukkit." + getVersion() + obcClassName;
-        Class<?> clazz;
-
-        try {
-            clazz = Class.forName(clazzName);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            loadedOBCClasses.put(obcClassName, null);
-            return null;
-        }
-
-        loadedOBCClasses.put(obcClassName, clazz);
+        Class<?> clazz = getClassUncached(class_fqn);
+        //System.out.println("DI-DEBUG: RetrievedC "+clazz);
+        loadedClasses.put(class_fqn, clazz);
         return clazz;
     }
+    public static String getVersionedClassName(String package_fqn,String classname){
+        return package_fqn+ "." + getVersion() + classname;
+    }
+    public static Class<?> getVersionedClass(String package_fqn,String classname){
+        String class_fqn = getVersionedClassName(package_fqn,classname);
+        Class<?> clazz = getClass(class_fqn);
+        //System.out.println("DI-DEBUG: RetrievedV "+clazz);
+        return clazz;
+    }
+    public static Class<?> getNmClass(String subpackage,String classname){
+        return getClass("net.minecraft."+subpackage+"."+classname);
+    }
+    public static Class<?> getNmVersionedClass(String subpackage,String classname){
+        return getVersionedClass("net.minecraft."+subpackage,classname);
+    }
+    public static Class<?> getNmsVersionedClass(String classname){
+        return getNmVersionedClass("server",classname);
+    }
+    public static Class<?> getObcVersionedClass(String classname){
+        Class<?> clazz = getVersionedClass("org.bukkit.craftbukkit",classname);
+        //System.out.println("DI-DEBUG: RetrievedOBC "+clazz);
+        return clazz;
+    }
+    
+    
 
     /**
      * Get a Bukkit {@link Player} players NMS playerConnection object

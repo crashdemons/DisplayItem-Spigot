@@ -17,6 +17,29 @@ import org.bukkit.inventory.ItemStack;
 public class ItemConverter {
     private ItemConverter(){}
     //https://www.spigotmc.org/threads/tut-item-tooltips-with-the-chatcomponent-api.65964/
+    
+    private static Class<?> nmsItemClass = null; //cached item class
+    private static Class<?> nmsTagClass = null; //cached tag class
+    
+    private static Class<?> findNmsItemClass(){
+        if(nmsItemClass!=null) return nmsItemClass;
+        Class<?> nmsItemStackClazz = ReflectionUtil.getNmsVersionedClass("ItemStack");//1.16.5 and lower:  net.minecraft.server.[version].ItemStack
+        if(nmsItemStackClazz==null) nmsItemStackClazz = ReflectionUtil.getNmClass("world.item","ItemStack");//1.17 first spigot release: net.minecraft.world.item.ItemStack (not versioned)
+        if(nmsItemStackClazz==null) nmsItemStackClazz = ReflectionUtil.getNmClass("server","ItemStack"); //possible first form without version
+        if(nmsItemStackClazz==null) nmsItemStackClazz = ReflectionUtil.getNmVersionedClass("world.item","ItemStack"); //possible second form with version
+        nmsItemClass = nmsItemStackClazz;
+        return nmsItemClass;
+    }
+    private static Class<?> findNmsTagClass(){
+        if(nmsTagClass!=null) return nmsTagClass;
+        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNmsVersionedClass("NBTTagCompound");//1.16.5 and lower: net minecraft.server.[version].NBTTagCompound
+        if(nbtTagCompoundClazz==null) nbtTagCompoundClazz = ReflectionUtil.getNmClass("nbt","NBTTagCompound"); //1.17 first spigot release: net.minecraft.nbt.NBTTagCompound
+        if(nbtTagCompoundClazz==null) nbtTagCompoundClazz = ReflectionUtil.getNmClass("server","NBTTagCompound"); 
+        if(nbtTagCompoundClazz==null) nbtTagCompoundClazz = ReflectionUtil.getNmVersionedClass("nbt","NBTTagCompound"); 
+        nmsTagClass = nbtTagCompoundClazz;
+        return nmsTagClass;
+    }
+    
     /**
     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
@@ -26,12 +49,17 @@ public class ItemConverter {
     */
     public static String convertItemStackToJson(ItemStack itemStack) {
         // ItemStack methods to get a net.minecraft.server.ItemStack object for serialization
-        Class<?> craftItemStackClazz = ReflectionUtil.getOBCClass("inventory.CraftItemStack");
+        Class<?> craftItemStackClazz = ReflectionUtil.getObcVersionedClass("inventory.CraftItemStack");//1.16.5 and lower.  1.17 first spigot release is unchanged.
+        if(craftItemStackClazz==null) throw new IllegalStateException("Cannot find OBC CraftItemStack class (for converting nbt to json)");
         Method asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
 
         // NMS Method to serialize a net.minecraft.server.ItemStack to a valid Json string
-        Class<?> nmsItemStackClazz = ReflectionUtil.getNMSClass("ItemStack");
-        Class<?> nbtTagCompoundClazz = ReflectionUtil.getNMSClass("NBTTagCompound");
+        Class<?> nmsItemStackClazz = findNmsItemClass();
+        if(nmsItemStackClazz==null) throw new IllegalStateException("Cannot find NM ItemStack class (for converting nbt to json)");
+        
+        
+        Class<?> nbtTagCompoundClazz = findNmsTagClass();
+        if(nbtTagCompoundClazz==null) throw new IllegalStateException("Cannot find NM NBTTagCompound class (for converting nbt to json)");
         Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
 
         Object nmsNbtTagCompoundObj; // This will just be an empty NBTTagCompound instance to invoke the saveNms method
