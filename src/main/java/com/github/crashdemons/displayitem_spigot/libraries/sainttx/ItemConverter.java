@@ -61,6 +61,8 @@ public class ItemConverter {
         Class<?> nbtTagCompoundClazz = findNmsTagClass();
         if(nbtTagCompoundClazz==null) throw new IllegalStateException("Cannot find NM NBTTagCompound class (for converting nbt to json)");
         Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
+        
+        if(saveNmsItemStackMethod==null) throw new IllegalStateException("Cannot find ItemStack.save method (for converting nbt to json)");
 
         Object nmsNbtTagCompoundObj; // This will just be an empty NBTTagCompound instance to invoke the saveNms method
         Object nmsItemStackObj; // This is the net.minecraft.server.ItemStack object received from the asNMSCopy method
