@@ -5,7 +5,11 @@
  */
 package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 
+import com.github.crashdemons.displayitem_spigot.compatibility.CompatibilityUnavailableException;
+import com.github.crashdemons.displayitem_spigot.compatibility.Version;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +19,17 @@ import org.bukkit.inventory.ItemStack;
  * @author sainttx
  */
 public class ItemConverter {
-    private ItemConverter(){}
+    
+    private static final HashMap<int[],String> saveMethods= new HashMap<>();
+    
+    static{
+        saveMethods.put(new int[]{1,18,0}, "b");  //261:267:net.minecraft.nbt.CompoundTag save(net.minecraft.nbt.CompoundTag) -> b
+        Version.init();
+    }
+    
+    private ItemConverter(){
+
+    }
     //https://www.spigotmc.org/threads/tut-item-tooltips-with-the-chatcomponent-api.65964/
     
     private static Class<?> nmsItemClass = null; //cached item class
@@ -40,6 +54,15 @@ public class ItemConverter {
         return nmsTagClass;
     }
     
+    private static String getVersionedItemSaveMethod(){
+        for(Map.Entry<int[],String> versionedMethod : saveMethods.entrySet()){
+            int[] ver = versionedMethod.getKey();
+            String method = versionedMethod.getValue();
+            if(Version.checkEquals(ver[0], ver[1], ver[2])) return method;
+        }
+        return null;
+    }
+    
     /**
     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
@@ -60,7 +83,13 @@ public class ItemConverter {
         
         Class<?> nbtTagCompoundClazz = findNmsTagClass();
         if(nbtTagCompoundClazz==null) throw new IllegalStateException("Cannot find NM NBTTagCompound class (for converting nbt to json)");
+        
         Method saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "save", nbtTagCompoundClazz);
+        if(saveNmsItemStackMethod==null){
+            String saveNmsItemStackMethod_name = getVersionedItemSaveMethod();
+            if(saveNmsItemStackMethod_name==null) throw new CompatibilityUnavailableException("This server version is not supported and the 'save' method mapping is unknown.");
+            saveNmsItemStackMethod = ReflectionUtil.getMethod(nmsItemStackClazz, saveNmsItemStackMethod_name, nbtTagCompoundClazz);
+        }
         
         if(saveNmsItemStackMethod==null) throw new IllegalStateException("Cannot find ItemStack.save method (for converting nbt to json)");
 
