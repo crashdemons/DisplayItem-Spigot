@@ -3,7 +3,7 @@ name: '"Server version is not supported" / CompatibilityUnavailableException'
 about: If you've received the "Server version is not supported" or CompatibilityUnavailableException
   exception message...
 title: "[UPDATE] "
-labels: ''
+labels: need-new-mappings, version-update
 assignees: ''
 
 ---
