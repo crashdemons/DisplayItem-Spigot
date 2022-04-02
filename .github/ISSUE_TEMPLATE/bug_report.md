@@ -22,3 +22,8 @@ If applicable, add screenshots to help explain your problem.
 **Required information**
 Server version text when using `/version` command? ____
 Plugin version when using `/version DisplayItem` command? ____
+
+**Additional Information**
+If relevant, please provide your DisplayItem config.yml
+
+Which other chat-formatting plugins do you use (like EssentialsChat, ChatControl, Factions3, ...), if any?
