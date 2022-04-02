@@ -25,6 +25,7 @@ public class ItemConverter {
     static{
         saveMethods.put(new int[]{1,18,0}, "b");  //261:267:net.minecraft.nbt.CompoundTag save(net.minecraft.nbt.CompoundTag) -> b
         saveMethods.put(new int[]{1,18,1}, "b");  //260:266:net.minecraft.nbt.CompoundTag save(net.minecraft.nbt.CompoundTag) -> b
+        saveMethods.put(new int[]{1,18,2}, "b");
         Version.init();
     }
     
