@@ -8,6 +8,7 @@ package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.ItemSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

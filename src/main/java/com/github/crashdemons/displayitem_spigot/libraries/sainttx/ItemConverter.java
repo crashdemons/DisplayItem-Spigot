@@ -11,6 +11,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import net.md_5.bungee.api.chat.ItemTag;
+import net.md_5.bungee.api.chat.hover.content.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
@@ -70,6 +72,47 @@ public class ItemConverter {
         return null;
     }
     
+    public static Object getNmsItem(ItemStack itemStack){
+        // ItemStack methods to get a net.minecraft.server.ItemStack object for serialization
+        Class<?> craftItemStackClazz = ReflectionUtil.getObcVersionedClass("inventory.CraftItemStack");//1.16.5 and lower.  1.17 first spigot release is unchanged.
+        if(craftItemStackClazz==null) throw new IllegalStateException("Cannot find OBC CraftItemStack class (for converting nbt to json)");
+        Method asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
+        
+        Object nmsItemStackObj; // This is the net.minecraft.server.ItemStack object received from the asNMSCopy method
+
+        try {
+            nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
+        } catch (Throwable t) {
+            Bukkit.getLogger().log(Level.SEVERE, "failed to resolve itemstack to nms item", t);
+            return null;
+        }
+
+        // Return a string representation of the serialized object
+        return nmsItemStackObj; 
+    }
+    
+    public static Object getNmsItemTags(Object nmsItem){
+        Class<?> nmsItemStackClazz = findNmsItemClass();
+        Method getTagMethod = ReflectionUtil.getMethod(nmsItemStackClazz, "getTagClone");
+        try{
+            Object nmsNbtTagCompoundObj = getTagMethod.invoke(nmsItem);
+            return nmsNbtTagCompoundObj;
+        }catch(Throwable t){
+            Bukkit.getLogger().log(Level.SEVERE, "failed to resolve itemstack tags", t);
+            return null;
+        }
+    }
+    
+    public static Item convertItemStackToBungee(ItemStack itemStack){
+        return new Item(
+            itemStack.getType().getKey().getKey(), 
+            itemStack.getAmount(), 
+            ItemTag.ofNbt(
+                    getNmsItemTags(getNmsItem(itemStack)).toString()
+            )
+        );
+    }
+    
     /**
     * Converts an {@link org.bukkit.inventory.ItemStack} to a Json string
     * for sending with {@link net.md_5.bungee.api.chat.BaseComponent}'s.
@@ -78,11 +121,8 @@ public class ItemConverter {
     * @return the Json string representation of the item
     */
     public static String convertItemStackToJson(ItemStack itemStack) {
-        // ItemStack methods to get a net.minecraft.server.ItemStack object for serialization
-        Class<?> craftItemStackClazz = ReflectionUtil.getObcVersionedClass("inventory.CraftItemStack");//1.16.5 and lower.  1.17 first spigot release is unchanged.
-        if(craftItemStackClazz==null) throw new IllegalStateException("Cannot find OBC CraftItemStack class (for converting nbt to json)");
-        Method asNMSCopyMethod = ReflectionUtil.getMethod(craftItemStackClazz, "asNMSCopy", ItemStack.class);
-
+        Object nmsItemStackObj = getNmsItem(itemStack);
+        
         // NMS Method to serialize a net.minecraft.server.ItemStack to a valid Json string
         Class<?> nmsItemStackClazz = findNmsItemClass();
         if(nmsItemStackClazz==null) throw new IllegalStateException("Cannot find NM ItemStack class (for converting nbt to json)");
@@ -101,12 +141,10 @@ public class ItemConverter {
         if(saveNmsItemStackMethod==null) throw new IllegalStateException("Cannot find ItemStack.save method (for converting nbt to json)");
 
         Object nmsNbtTagCompoundObj; // This will just be an empty NBTTagCompound instance to invoke the saveNms method
-        Object nmsItemStackObj; // This is the net.minecraft.server.ItemStack object received from the asNMSCopy method
         Object itemAsJsonObject; // This is the net.minecraft.server.ItemStack after being put through saveNmsItem method
 
         try {
             nmsNbtTagCompoundObj = nbtTagCompoundClazz.newInstance();
-            nmsItemStackObj = asNMSCopyMethod.invoke(null, itemStack);
             itemAsJsonObject = saveNmsItemStackMethod.invoke(nmsItemStackObj, nmsNbtTagCompoundObj);
         } catch (Throwable t) {
             Bukkit.getLogger().log(Level.SEVERE, "failed to serialize itemstack to nms item", t);
