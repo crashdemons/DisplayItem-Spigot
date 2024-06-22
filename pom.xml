@@ -21,7 +21,7 @@
         </repository>
         <repository>
             <id>md_5-releases</id>
-            <url>http://repo.md-5.net/content/repositories/releases/</url>
+            <url>https://repo.md-5.net/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
@@ -33,7 +33,7 @@
         </repository>
         <repository>
             <id>placeholderapi</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
     
@@ -46,12 +46,12 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>1.20-R0.2</version>
+            <version>[1.21-R0.1-SNAPSHOT,)</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>[1.21-R0.1-SNAPSHOT]</version>
+            <version>[1.21-R0.1-SNAPSHOT,)</version>
         </dependency>
         
         <dependency>

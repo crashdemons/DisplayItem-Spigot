@@ -2,7 +2,7 @@ name: DisplayItem
 version: ${project.version}-${timestamp}${user.name}
 description: DisplayItem
 author: crashdemons
-api-version: 1.13
+api-version: 1.21
 main: com.github.crashdemons.displayitem_spigot.DisplayItem
 
 #plugins we use for features AND plugins we want to format chat *FIRST* at the same priority level as DI.
