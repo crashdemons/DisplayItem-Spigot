@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
+
 /**
  *
  * @author sainttx
@@ -55,8 +57,45 @@ public class HoverComponentManager {
 
         ItemMeta meta = item.getItemMeta();
         //if(meta==null) meta = Bukkit.getItemFactory().getItemMeta(item.getType());
-        HoverEvent event1 = getHoverEvent(item, jsonLengthLimit, meta);
-        messageComponent.setHoverEvent(event1);
+        //HoverEvent event1 = getHoverEvent(item, jsonLengthLimit, meta);
+
+        String nbt = meta == null ? null : meta.getAsString();
+        //System.out.println("DEBUG-DI: NBT "+nbt);
+        //ItemTag bcTag = ItemTag.ofNbt(nbt);
+        //System.out.println("DEBUG-DI: TAG "+bcTag.toString());
+        //Item bcItem = new Item(item.getType().getKey().toString(), item.getAmount(),bcTag);
+
+
+        //So.... Bungeechat 1.21-R0.1 does not properly serialize the Item (it sets tag NBT, instead of 'components')
+        //So here is a really terrible solution to set that NBT without a serializer.
+        String vanillaItemId=item.getType().getKey().toString();
+        int count = item.getAmount();
+        String itemJson="{id:\""+vanillaItemId+"\",count:"+count+",components:"+nbt+",Count:"+count+"}";
+
+        if(nbt!=null && itemJson.length()> jsonLengthLimit){
+            throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ jsonLengthLimit +" ("+itemJson.length()+")",itemJson.length(), jsonLengthLimit);
+        }
+
+       //messageComponent.setHoverEvent(event1);
+        //return new BaseComponent[]{messageComponent};
+
+
+
+        BaseComponent[] hoverEventComponents = new BaseComponent[]{
+                new TextComponent(itemJson) // The only element of the hover events basecomponents is the item json
+        };
+
+        // Create the hover event
+        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
+
+        // set the hover event to the item event for the text-component that the player will see
+        //for(BaseComponent messageComponent : messageComponents){
+        messageComponent.setHoverEvent(event);
+        //}
+
+
+
+
         return new BaseComponent[]{messageComponent};
 
 /*
@@ -83,6 +122,8 @@ public class HoverComponentManager {
         return new BaseComponent[]{messageComponent};*/
     }
 
+
+    //this should be the proper method of doing this, but it doesn't serialize properly on 1.21 yet (as of 2024-06-22)
     @NotNull
     private static HoverEvent getHoverEvent(ItemStack item, int jsonLengthLimit, ItemMeta meta) throws ItemJsonLengthException {
         String nbt = meta == null ? null : meta.getAsString();
@@ -92,10 +133,14 @@ public class HoverComponentManager {
         if(nbt!=null && nbt.length()> jsonLengthLimit){
             throw new ItemJsonLengthException("Item NBT exceeded plugin limit of "+ jsonLengthLimit +" ("+nbt.length()+")",nbt.length(), jsonLengthLimit);
         }
+
         ItemTag tag = ItemTag.ofNbt(nbt);
         System.out.println("DEBUG-DI: TAG "+tag.toString());
-
         Item itm = new Item(item.getType().getKey().toString(), item.getAmount(),tag);
+
+        //ItemSerializer ser = new ItemSerializer();
+        ///ser.serialize(
+
 
         return new HoverEvent(HoverEvent.Action.SHOW_ITEM, itm);
     }
