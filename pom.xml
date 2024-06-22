@@ -10,15 +10,11 @@
         <timestamp>${maven.build.timestamp}</timestamp>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
     
     <repositories>
-        <repository>
-            <id>crashdemons-repo</id>
-            <url>https://meme.tips/java-repos/</url>
-        </repository>
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -50,18 +46,18 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>1.19-R0.1-SNAPSHOT</version>
+            <version>1.20-R0.2</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>[1.20.1-R0.1-SNAPSHOT]</version>
+            <version>[1.21-R0.1-SNAPSHOT]</version>
         </dependency>
         
         <dependency>
          <groupId>me.clip</groupId>
           <artifactId>placeholderapi</artifactId>
-          <version>2.10.3</version>
+          <version>2.11.6</version>
          <scope>provided</scope>
         </dependency>
         <!--
