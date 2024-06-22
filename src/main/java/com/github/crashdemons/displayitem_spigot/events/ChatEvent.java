@@ -18,8 +18,8 @@ public interface ChatEvent {
     public String getMessage();
     public Set<Player> getRecipients();
     public boolean isCancelled();
-    public void setCancelled​(boolean cancel);	
-    public void setFormat​(String format);
-    public void setMessage​(String message);
+    public void setCancelled(boolean cancel);
+    public void setFormat(String format);
+    public void setMessage(String message);
     public boolean isAsynchronous();
 }
