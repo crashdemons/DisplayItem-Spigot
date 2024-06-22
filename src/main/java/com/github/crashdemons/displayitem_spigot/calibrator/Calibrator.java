@@ -19,7 +19,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  * @author crashdemons (crashenator at gmail.com)
  */
 public class Calibrator {
-    private final Boolean lock = false;
+    private final Object lock = new Object();
     private CalibrationState state = CalibrationState.UNSTARTED;
     private DisplayItem plugin;
     public Calibrator(DisplayItem di){
