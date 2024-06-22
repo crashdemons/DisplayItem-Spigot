@@ -47,8 +47,12 @@ public class ReflectionUtil {
      */
     public static String getVersion() {
         if (versionString == null) {
-            String name = Bukkit.getServer().getClass().getPackage().getName();
-            versionString = name.substring(name.lastIndexOf('.') + 1) + ".";
+            String serverClassName = Bukkit.getServer().getClass().getName();
+            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+            String possibleVersionString = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1) + ".";
+            System.out.println("DI-DEBUG: getVersion "+serverClassName+" -> "+" -> "+serverPackageName+" -> "+possibleVersionString);
+            if(!possibleVersionString.startsWith("v") && !possibleVersionString.startsWith("1")) return "";
+            versionString=possibleVersionString;
         }
 
         return versionString;
@@ -85,6 +89,7 @@ public class ReflectionUtil {
     }
     public static Class<?> getVersionedClass(String package_fqn,String classname){
         String class_fqn = getVersionedClassName(package_fqn,classname);
+        System.out.println("DI-DEBUG: getVersionedClass: "+package_fqn+","+classname+" -> "+class_fqn);
         Class<?> clazz = getClass(class_fqn);
         //System.out.println("DI-DEBUG: RetrievedV "+clazz);
         return clazz;
