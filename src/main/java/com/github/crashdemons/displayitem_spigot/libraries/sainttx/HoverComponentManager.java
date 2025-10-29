@@ -66,8 +66,7 @@ public class HoverComponentManager {
         //Item bcItem = new Item(item.getType().getKey().toString(), item.getAmount(),bcTag);
 
 
-        //So.... Bungeechat 1.21-R0.1 does not properly serialize the Item (it sets tag NBT, instead of 'components')
-        //So here is a really terrible solution to set that NBT without a serializer.
+
         String vanillaItemId=item.getType().getKey().toString();
         int count = item.getAmount();
         String itemJson="{id:\""+vanillaItemId+"\",count:"+count+",components:"+nbt+",Count:"+count+"}";
@@ -76,50 +75,17 @@ public class HoverComponentManager {
             throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ jsonLengthLimit +" ("+itemJson.length()+")",itemJson.length(), jsonLengthLimit);
         }
 
-       //messageComponent.setHoverEvent(event1);
-        //return new BaseComponent[]{messageComponent};
-
-
-
-        BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                new TextComponent(itemJson) // The only element of the hover events basecomponents is the item json
-        };
+        //2025: Trust bungeechat to serialize this properly now?? maybe??  (old note: when 1.21-R0.1 came out, it was improperly serializing components as "tag" property)
+        ItemTag itemTag = ItemTag.ofNbt(nbt);
+        Item hoverItem = new Item(vanillaItemId, item.getAmount(), itemTag);
 
         // Create the hover event
-        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
+        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverItem);
 
         // set the hover event to the item event for the text-component that the player will see
-        //for(BaseComponent messageComponent : messageComponents){
         messageComponent.setHoverEvent(event);
-        //}
-
-
-
 
         return new BaseComponent[]{messageComponent};
-
-/*
-
-
-        String itemJson = ItemConverter.convertItemStackToJson(item);
-        if(itemJson.length()>jsonLengthLimit){
-            throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+jsonLengthLimit+" ("+itemJson.length()+")",itemJson.length(),jsonLengthLimit);
-        }
-
-        // Prepare a BaseComponent array with the itemJson as a text component
-        BaseComponent[] hoverEventComponents = new BaseComponent[]{
-                new TextComponent(itemJson) // The only element of the hover events basecomponents is the item json
-        };
-
-        // Create the hover event
-        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverEventComponents);
-
-        // set the hover event to the item event for the text-component that the player will see
-        //for(BaseComponent messageComponent : messageComponents){
-            messageComponent.setHoverEvent(event);
-        //}
-
-        return new BaseComponent[]{messageComponent};*/
     }
 
 
