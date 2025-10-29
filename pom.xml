@@ -46,12 +46,12 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-chat</artifactId>
-            <version>[1.21-R0.1-SNAPSHOT,)</version>
+            <version>[1.21-R0.5-SNAPSHOT,)</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>[1.21-R0.1-SNAPSHOT,)</version>
+            <version>[1.21.10-R0.1-SNAPSHOT,)</version>
         </dependency>
         
         <dependency>
