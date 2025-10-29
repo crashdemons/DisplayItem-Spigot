@@ -16,6 +16,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import com.github.crashdemons.displayitem_spigot.libraries.ostlerdev.ItemHoverEventHelper;
+
 import java.lang.reflect.Type;
 
 /**
@@ -54,7 +56,13 @@ public class HoverComponentManager {
         return getTooltipComponent(messageContainer,item,jsonLengthLimit);
     }
     public static BaseComponent[] getTooltipComponent(BaseComponent messageComponent, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
+        HoverEvent event = ItemHoverEventHelper.createFrom(item);
+        messageComponent.setHoverEvent(event);
+        return new BaseComponent[]{messageComponent};
+    }
 
+    @NotNull
+    private static BaseComponent[] oldGetTooltipComponent(BaseComponent messageComponent, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
         ItemMeta meta = item.getItemMeta();
         //if(meta==null) meta = Bukkit.getItemFactory().getItemMeta(item.getType());
         //HoverEvent event1 = getHoverEvent(item, jsonLengthLimit, meta);
