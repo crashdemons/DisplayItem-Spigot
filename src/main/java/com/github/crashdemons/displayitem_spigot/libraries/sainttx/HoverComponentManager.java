@@ -5,6 +5,7 @@
  */
 package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 
+import com.github.crashdemons.displayitem_spigot.libraries.crashdemons.ItemJsonLengthException;
 import com.github.crashdemons.displayitem_spigot.libraries.ostlerdev.ComponentsShowItem;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
