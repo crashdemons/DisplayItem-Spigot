@@ -5,18 +5,18 @@
  */
 package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 
+import com.github.crashdemons.displayitem_spigot.libraries.ostlerdev.ComponentsShowItem;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ItemTag;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Item;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Type;
 
 /**
  *
@@ -69,18 +69,24 @@ public class HoverComponentManager {
 
         String vanillaItemId=item.getType().getKey().toString();
         int count = item.getAmount();
-        String itemJson="{id:\""+vanillaItemId+"\",count:"+count+",components:"+nbt+",Count:"+count+"}";
+        String itemJson="{\"id\":\""+vanillaItemId+"\",\"count\":"+count+",\"components\":"+nbt+"}";
 
         if(nbt!=null && itemJson.length()> jsonLengthLimit){
             throw new ItemJsonLengthException("Item JSON exceeded plugin limit of "+ jsonLengthLimit +" ("+itemJson.length()+")",itemJson.length(), jsonLengthLimit);
         }
 
         //2025: Trust bungeechat to serialize this properly now?? maybe??  (old note: when 1.21-R0.1 came out, it was improperly serializing components as "tag" property)
-        ItemTag itemTag = ItemTag.ofNbt(nbt);
-        Item hoverItem = new Item(vanillaItemId, item.getAmount(), itemTag);
+        //ItemTag itemTag = ItemTag.ofNbt(nbt);
+        //Item hoverItem = new Item(vanillaItemId, item.getAmount(), itemTag);
+        //NOTE hover component "Item" STILL serializes "tag" instead of "components" as of 2026-02-28 in 1.21-R0.5 and this is the version included in spigot-1.21.11-R0.2
+
+        //construct a replacement hover item object with components as a json element.
+        JsonElement components = JsonParser.parseString(nbt);
+        ComponentsShowItem hoverItem2 = new ComponentsShowItem(vanillaItemId, item.getAmount(), components);
+        //Bukkit.getLogger().info(hoverItem2.toString());
 
         // Create the hover event
-        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverItem);
+        HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverItem2);
 
         // set the hover event to the item event for the text-component that the player will see
         messageComponent.setHoverEvent(event);
