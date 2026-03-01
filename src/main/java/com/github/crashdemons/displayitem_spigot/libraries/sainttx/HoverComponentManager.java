@@ -62,7 +62,10 @@ public class HoverComponentManager {
         System.out.println("before: "+nbt);
         String nbt2 = nbt.replaceAll("(1)[bB]([^a-zA-Z0-9\"'])","true$2");
         nbt2 = nbt2.replaceAll("(0)[bB]([^a-zA-Z0-9\"'])","false$2");
-        nbt2 = nbt.replaceAll("([0-9]+)[bBsSlLfFdD]([^a-zA-Z0-9\"'])","$1$2");
+        nbt2 = nbt2.replaceAll("([0-9]+)[bBsSlLfFdD]([^a-zA-Z0-9\"'])","$1$2");
+
+        //[I;1,2,3]
+        nbt2 = nbt2.replaceAll("\\[[BILD];([0-9])", "[$1");
 
         System.out.println("2: "+nbt2);
 
