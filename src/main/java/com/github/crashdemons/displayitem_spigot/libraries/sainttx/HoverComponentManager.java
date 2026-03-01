@@ -114,6 +114,14 @@ public class HoverComponentManager {
 
         JsonObject components = gson.fromJson(nbt2, JsonObject.class);//JsonParser.parseString(nbt);
 
+        //ensure PDC data not sent
+        if(components.has("minecraft:custom_data")){
+            components.remove("minecraft:custom_data");
+        }
+        if(components.has("minecraft:profile")){
+            components.remove("minecraft:profile");
+        }
+
         Bukkit.getLogger().info(components.toString());
 
         ComponentsShowItem hoverItem2 = new ComponentsShowItem(vanillaItemId, item.getAmount(), components);// components);

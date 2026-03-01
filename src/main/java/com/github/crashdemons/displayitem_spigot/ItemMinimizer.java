@@ -6,6 +6,7 @@
 package com.github.crashdemons.displayitem_spigot;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 /**
  *
@@ -35,15 +37,32 @@ public class ItemMinimizer {
             return stack;
         }
 
-        if(stack.getType().name().toUpperCase().endsWith("SHULKER_BOX")) return minimizeShulker(stack);
+
+        ItemStack copiedStack = new ItemStack(stack);
+
+        //remove custom data on item - this isn't displayed anyway
+        if(copiedStack.hasItemMeta()){
+            ItemMeta meta = copiedStack.getItemMeta();
+            if(meta!=null){
+                PersistentDataContainer pdc = meta.getPersistentDataContainer();
+                if(pdc!=null && !pdc.isEmpty()){
+                    var keys = new HashSet<>(pdc.getKeys());
+                    for(var key : keys)
+                        pdc.remove(key);
+                }
+                copiedStack.setItemMeta(meta);
+            }
+        }
+
+        if(copiedStack.getType().name().toUpperCase().endsWith("SHULKER_BOX")) return minimizeShulker(copiedStack);
         
         
-        switch (stack.getType()) {
+        switch (copiedStack.getType()) {
             case WRITTEN_BOOK:
             case WRITABLE_BOOK:
-                return minimizeBook(stack);
+                return minimizeBook(copiedStack);
             default:
-                return stack;
+                return copiedStack;
         }
     }
 
