@@ -5,19 +5,22 @@
  */
 package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 
+import com.github.crashdemons.displayitem_spigot.libraries.bhupesh.JsonHelper;
 import com.github.crashdemons.displayitem_spigot.libraries.crashdemons.ItemJsonLengthException;
 import com.github.crashdemons.displayitem_spigot.libraries.ostlerdev.ComponentsShowItem;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ItemTag;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Item;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  *
@@ -54,6 +57,28 @@ public class HoverComponentManager {
 
         return getTooltipComponent(messageContainer,item,jsonLengthLimit);
     }
+
+    public static String fixNBTJson(String nbt){
+        System.out.println("before: "+nbt);
+        String nbt2 = nbt.replaceAll("(1)[bB]([^a-zA-Z0-9\"'])","true$2");
+        nbt2 = nbt2.replaceAll("(0)[bB]([^a-zA-Z0-9\"'])","false$2");
+        nbt2 = nbt.replaceAll("([0-9]+)[bBsSlLfFdD]([^a-zA-Z0-9\"'])","$1$2");
+
+        System.out.println("2: "+nbt2);
+
+        Gson gson = JsonHelper.getMCJSONParser();
+        JsonElement components = gson.fromJson(nbt2, JsonObject.class);//JsonParser.parseString(nbt);
+        nbt2 = components.toString();
+        System.out.println("3: "+nbt2);
+
+        nbt2 = nbt2.replaceAll("\"(bold|italic|underlined|strikethrough|obfuscated|minecraft:enchantment_glint_override)\":1([^0-9\"'])","\"$1\":true$2");
+        nbt2 = nbt2.replaceAll("\"(bold|italic|underlined|strikethrough|obfuscated|minecraft:enchantment_glint_override)\":0([^0-9\"'])","\"$1\":false$2");
+        nbt2 = nbt2.replaceAll("\"(is|has)_([a-zA-Z_-]+)\":1([^0-9\"'])","\"$1_$2\":true$3");
+        nbt2 = nbt2.replaceAll("\"(is|has)_([a-zA-Z_-]+)\":0([^0-9\"'])","\"$1_$2\":false$3");
+        System.out.println("4: "+nbt2);
+        return nbt2;
+    }
+
     public static BaseComponent[] getTooltipComponent(BaseComponent messageComponent, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
 
         ItemMeta meta = item.getItemMeta();
@@ -66,8 +91,6 @@ public class HoverComponentManager {
         //System.out.println("DEBUG-DI: TAG "+bcTag.toString());
         //Item bcItem = new Item(item.getType().getKey().toString(), item.getAmount(),bcTag);
 
-
-
         String vanillaItemId=item.getType().getKey().toString();
         int count = item.getAmount();
         String itemJson="{\"id\":\""+vanillaItemId+"\",\"count\":"+count+",\"components\":"+nbt+"}";
@@ -77,20 +100,33 @@ public class HoverComponentManager {
         }
 
         //2025: Trust bungeechat to serialize this properly now?? maybe??  (old note: when 1.21-R0.1 came out, it was improperly serializing components as "tag" property)
-        //ItemTag itemTag = ItemTag.ofNbt(nbt);
+        ItemTag itemTag = ItemTag.ofNbt(nbt);
         //Item hoverItem = new Item(vanillaItemId, item.getAmount(), itemTag);
         //NOTE hover component "Item" STILL serializes "tag" instead of "components" as of 2026-02-28 in 1.21-R0.5 and this is the version included in spigot-1.21.11-R0.2
 
         //construct a replacement hover item object with components as a json element.
-        JsonElement components = JsonParser.parseString(nbt);
-        ComponentsShowItem hoverItem2 = new ComponentsShowItem(vanillaItemId, item.getAmount(), components);
+
+        Gson gson = JsonHelper.getMCJSONParser();
+        String nbt2 = fixNBTJson(nbt);
+
+        JsonObject components = gson.fromJson(nbt2, JsonObject.class);//JsonParser.parseString(nbt);
+
+        Bukkit.getLogger().info(components.toString());
+
+        ComponentsShowItem hoverItem2 = new ComponentsShowItem(vanillaItemId, item.getAmount(), components);// components);
         //Bukkit.getLogger().info(hoverItem2.toString());
+
+        /*Map<String, Object> fields = item.copy();
+        Object metaField = fields.get("meta");
+        Bukkit.getLogger().info(" item serialize "+metaField);*/
 
         // Create the hover event
         HoverEvent event = new HoverEvent(HoverEvent.Action.SHOW_ITEM, hoverItem2);
 
         // set the hover event to the item event for the text-component that the player will see
         messageComponent.setHoverEvent(event);
+
+
 
         return new BaseComponent[]{messageComponent};
     }
