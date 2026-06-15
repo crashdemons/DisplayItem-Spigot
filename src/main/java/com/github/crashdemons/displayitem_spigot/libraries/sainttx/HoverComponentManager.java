@@ -59,7 +59,7 @@ public class HoverComponentManager {
     }
 
     public static String fixNBTJson(String nbt){
-        System.out.println("before: "+nbt);
+        //System.out.println("before: "+nbt);
         String nbt2 = nbt.replaceAll("(1)[bB]([^a-zA-Z0-9\"'])","true$2");
         nbt2 = nbt2.replaceAll("(0)[bB]([^a-zA-Z0-9\"'])","false$2");
         nbt2 = nbt2.replaceAll("([0-9]+)[bBsSlLfFdD]([^a-zA-Z0-9\"'])","$1$2");
@@ -67,18 +67,18 @@ public class HoverComponentManager {
         //[I;1,2,3]
         nbt2 = nbt2.replaceAll("\\[[BILD];([0-9])", "[$1");
 
-        System.out.println("2: "+nbt2);
+        //System.out.println("2: "+nbt2);
 
         Gson gson = JsonHelper.getMCJSONParser();
         JsonElement components = gson.fromJson(nbt2, JsonObject.class);//JsonParser.parseString(nbt);
         nbt2 = components.toString();
-        System.out.println("3: "+nbt2);
+        //System.out.println("3: "+nbt2);
 
         nbt2 = nbt2.replaceAll("\"(bold|italic|underlined|strikethrough|obfuscated|minecraft:enchantment_glint_override)\":1([^0-9\"'])","\"$1\":true$2");
         nbt2 = nbt2.replaceAll("\"(bold|italic|underlined|strikethrough|obfuscated|minecraft:enchantment_glint_override)\":0([^0-9\"'])","\"$1\":false$2");
         nbt2 = nbt2.replaceAll("\"(is|has)_([a-zA-Z_-]+)\":1([^0-9\"'])","\"$1_$2\":true$3");
         nbt2 = nbt2.replaceAll("\"(is|has)_([a-zA-Z_-]+)\":0([^0-9\"'])","\"$1_$2\":false$3");
-        System.out.println("4: "+nbt2);
+        //System.out.println("4: "+nbt2);
         return nbt2;
     }
 
@@ -122,7 +122,7 @@ public class HoverComponentManager {
             components.remove("minecraft:profile");
         }
 
-        Bukkit.getLogger().info(components.toString());
+        //Bukkit.getLogger().info(components.toString());
 
         ComponentsShowItem hoverItem2 = new ComponentsShowItem(vanillaItemId, item.getAmount(), components);// components);
         //Bukkit.getLogger().info(hoverItem2.toString());
@@ -148,14 +148,14 @@ public class HoverComponentManager {
     private static HoverEvent getHoverEvent(ItemStack item, int jsonLengthLimit, ItemMeta meta) throws ItemJsonLengthException {
         String nbt = meta == null ? null : meta.getAsString();
         //String comp = meta.getAsComponentString();
-        System.out.println("DEBUG-DI: NBT "+nbt);
+        //System.out.println("DEBUG-DI: NBT "+nbt);
         //System.out.println("DEBUG-DI: COMP "+comp);
         if(nbt!=null && nbt.length()> jsonLengthLimit){
             throw new ItemJsonLengthException("Item NBT exceeded plugin limit of "+ jsonLengthLimit +" ("+nbt.length()+")",nbt.length(), jsonLengthLimit);
         }
 
         ItemTag tag = ItemTag.ofNbt(nbt);
-        System.out.println("DEBUG-DI: TAG "+tag.toString());
+        //System.out.println("DEBUG-DI: TAG "+tag.toString());
         Item itm = new Item(item.getType().getKey().toString(), item.getAmount(),tag);
 
         //ItemSerializer ser = new ItemSerializer();
