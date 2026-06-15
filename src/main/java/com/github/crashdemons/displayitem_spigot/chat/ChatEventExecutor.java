@@ -123,7 +123,7 @@ public class ChatEventExecutor implements EventExecutor {
             for(BaseComponent component : chatLineSplit.content){
                 legacyMessage+=component.toLegacyText();
             }
-            //DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
+            DisplayItem.plugin.getLogger().info("debug: <"+legacyMessage+">");
             replacementEvent.setMessage(legacyMessage);
             replacementEvent.setMessageComponents(chatLineSplit.content);
 
