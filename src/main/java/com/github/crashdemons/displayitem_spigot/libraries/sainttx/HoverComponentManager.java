@@ -5,10 +5,9 @@
  */
 package com.github.crashdemons.displayitem_spigot.libraries.sainttx;
 
-import com.github.crashdemons.displayitem_spigot.libraries.bhupesh.JsonHelper;
 import com.github.crashdemons.displayitem_spigot.libraries.crashdemons.ItemJsonLengthException;
 import com.github.crashdemons.displayitem_spigot.libraries.ostlerdev.ComponentsShowItem;
-import com.google.gson.*;
+import com.google.gson.JsonObject;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ItemTag;
@@ -19,8 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  *
@@ -59,27 +56,7 @@ public class HoverComponentManager {
     }
 
     public static String fixNBTJson(String nbt){
-        //System.out.println("before: "+nbt);
-        String nbt2 = nbt.replaceAll("(1)[bB]([^a-zA-Z0-9\"'])","true$2");
-        nbt2 = nbt2.replaceAll("(0)[bB]([^a-zA-Z0-9\"'])","false$2");
-        nbt2 = nbt2.replaceAll("([0-9]+)[bBsSlLfFdD]([^a-zA-Z0-9\"'])","$1$2");
-
-        //[I;1,2,3]
-        nbt2 = nbt2.replaceAll("\\[[BILD];([0-9])", "[$1");
-
-        //System.out.println("2: "+nbt2);
-
-        Gson gson = JsonHelper.getMCJSONParser();
-        JsonElement components = gson.fromJson(nbt2, JsonObject.class);//JsonParser.parseString(nbt);
-        nbt2 = components.toString();
-        //System.out.println("3: "+nbt2);
-
-        nbt2 = nbt2.replaceAll("\"(bold|italic|underlined|strikethrough|obfuscated|minecraft:enchantment_glint_override)\":1([^0-9\"'])","\"$1\":true$2");
-        nbt2 = nbt2.replaceAll("\"(bold|italic|underlined|strikethrough|obfuscated|minecraft:enchantment_glint_override)\":0([^0-9\"'])","\"$1\":false$2");
-        nbt2 = nbt2.replaceAll("\"(is|has)_([a-zA-Z_-]+)\":1([^0-9\"'])","\"$1_$2\":true$3");
-        nbt2 = nbt2.replaceAll("\"(is|has)_([a-zA-Z_-]+)\":0([^0-9\"'])","\"$1_$2\":false$3");
-        //System.out.println("4: "+nbt2);
-        return nbt2;
+        return NbtJsonConverter.parseCompoundString(nbt);
     }
 
     public static BaseComponent[] getTooltipComponent(BaseComponent messageComponent, ItemStack item, int jsonLengthLimit) throws ItemJsonLengthException {
@@ -109,10 +86,7 @@ public class HoverComponentManager {
 
         //construct a replacement hover item object with components as a json element.
 
-        Gson gson = JsonHelper.getMCJSONParser();
-        String nbt2 = fixNBTJson(nbt);
-
-        JsonObject components = gson.fromJson(nbt2, JsonObject.class);//JsonParser.parseString(nbt);
+        JsonObject components = NbtJsonConverter.parseCompound(nbt);
 
         //ensure PDC data not sent
         if(components.has("minecraft:custom_data")){
